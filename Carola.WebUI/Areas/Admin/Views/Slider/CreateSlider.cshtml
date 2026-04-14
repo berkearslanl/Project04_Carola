@@ -1,0 +1,163 @@
+@model CreateSliderDto
+@using Carola.DtoLayer.Dtos.SliderDtos
+@{
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    :root { --bg-dark:#0d0f14; --bg-dark2:#13161e; --bg-dark3:#1a1e2a; --accent:#e8ff47; --accent-dim:rgba(232,255,71,.12); --danger:#ff5259; --success:#30e0a1; --border:rgba(255,255,255,.07); --text:#e2e8f0; --text-muted:#7a8499; --radius:12px; --radius-lg:18px; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    .cs-root { padding:28px; font-family:'DM Sans','Segoe UI',sans-serif; color:var(--text); }
+    .cs-breadcrumb { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+    .cs-breadcrumb a { color:var(--text-muted); text-decoration:none; } .cs-breadcrumb a:hover { color:var(--text); } .cs-breadcrumb span { color:var(--text); }
+    .cs-page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
+    .cs-page-title { font-family:'Syne',Georgia,sans-serif; font-size:26px; font-weight:700; color:var(--text); line-height:1; }
+    .cs-page-subtitle { font-size:13px; color:var(--text-muted); margin-top:5px; }
+    .btn-accent { background:var(--accent); color:#0d0f14; border:none; border-radius:10px; padding:9px 20px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:7px; text-decoration:none; transition:opacity .2s; }
+    .btn-accent:hover { opacity:.85; color:#0d0f14; }
+    .btn-outline { background:transparent; color:var(--text-muted); border:1px solid var(--border); border-radius:10px; padding:9px 18px; font-size:13px; font-weight:500; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:7px; text-decoration:none; transition:background .2s,color .2s; }
+    .btn-outline:hover { background:var(--bg-dark2); color:var(--text); }
+    .cs-card { background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:20px; }
+    .cs-card:last-child { margin-bottom:0; }
+    .cs-card-head { display:flex; align-items:center; gap:10px; padding:16px 20px; border-bottom:1px solid var(--border); }
+    .cs-card-icon { width:32px; height:32px; border-radius:9px; display:grid; place-items:center; font-size:15px; flex-shrink:0; }
+    .cs-card-icon.yellow { background:var(--accent-dim); color:var(--accent); }
+    .cs-card-title { font-size:14px; font-weight:600; color:var(--text); }
+    .cs-card-subtitle { font-size:12px; color:var(--text-muted); margin-top:1px; }
+    .cs-card-body { padding:20px; }
+    .cs-field { display:flex; flex-direction:column; gap:6px; margin-bottom:18px; }
+    .cs-field:last-child { margin-bottom:0; }
+    .cs-field label { font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; }
+    .cs-required { color:var(--danger); margin-left:3px; }
+    .cs-field input, .cs-field textarea { background:var(--bg-dark3); border:1px solid var(--border); border-radius:10px; color:var(--text); padding:10px 14px; font-size:13px; font-family:inherit; outline:none; width:100%; transition:border .2s,box-shadow .2s; }
+    .cs-field textarea { resize:vertical; min-height:90px; }
+    .cs-field input::placeholder, .cs-field textarea::placeholder { color:var(--text-muted); }
+    .cs-field input:focus, .cs-field textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-dim); }
+    .field-validation-error { font-size:11px; color:var(--danger); }
+    .input-validation-error { border-color:rgba(255,82,89,.5) !important; box-shadow:0 0 0 3px rgba(255,82,89,.1) !important; }
+    .cs-action-bar { display:flex; align-items:center; justify-content:flex-end; gap:10px; padding-top:20px; border-top:1px solid var(--border); margin-top:4px; }
+    .cs-img-preview { width:100%; height:120px; border-radius:10px; background:var(--bg-dark3); border:1px dashed var(--border); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; overflow:hidden; margin-top:10px; }
+    .cs-img-preview img { width:100%; height:100%; object-fit:cover; display:none; }
+    .cs-img-preview.has-img img { display:block; }
+    .cs-img-preview.has-img .cs-preview-ph { display:none; }
+    .cs-preview-ph { display:flex; flex-direction:column; align-items:center; gap:6px; }
+    .cs-preview-icon { font-size:24px; color:var(--text-muted); }
+    .cs-preview-label { font-size:11px; color:var(--text-muted); }
+    .cs-validation-summary { background:rgba(255,82,89,.08); border:1px solid rgba(255,82,89,.2); border-radius:10px; padding:12px 16px; margin-bottom:20px; display:none; }
+    .cs-validation-summary.show { display:block; }
+    .cs-validation-summary p { font-size:12px; color:var(--danger); }
+</style>
+
+<div class="cs-root">
+    <div class="cs-breadcrumb">
+        İçerik Yönetimi <span>›</span>
+        <a href="/Admin/Slider/SliderList/">Slider Listesi</a>
+        <span>›</span> <span>Yeni Slider Ekle</span>
+    </div>
+
+    <div class="cs-page-header">
+        <div>
+            <h1 class="cs-page-title">Yeni Slider Ekle</h1>
+            <p class="cs-page-subtitle">Ana sayfaya yeni bir slider öğesi ekleyin.</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <a href="/Admin/Slider/SliderList/" class="btn-outline">✕ İptal</a>
+            <button type="button" class="btn-accent" onclick="csSubmit()">＋ Slider'ı Kaydet</button>
+        </div>
+    </div>
+
+    <div class="cs-validation-summary" id="csValSummary">
+        <p id="csValMsg"></p>
+    </div>
+
+    <form id="csForm" asp-area="Admin" asp-controller="Slider" asp-action="CreateSlider" method="post" novalidate>
+        @Html.AntiForgeryToken()
+
+        <div class="cs-card">
+            <div class="cs-card-head">
+                <div class="cs-card-icon yellow">🖼️</div>
+                <div>
+                    <div class="cs-card-title">Slider Bilgileri</div>
+                    <div class="cs-card-subtitle">Başlık, açıklama ve görsel URL'lerini girin</div>
+                </div>
+            </div>
+            <div class="cs-card-body">
+                <div class="cs-field">
+                    <label>Başlık <span class="cs-required">*</span></label>
+                    <input type="text" asp-for="Title" id="csTitle" placeholder="ör. Hayalinizdeki Araca Ulaşın" maxlength="100" autocomplete="off" />
+                    <span asp-validation-for="Title" class="field-validation-error"></span>
+                </div>
+
+                <div class="cs-field">
+                    <label>Açıklama <span class="cs-required">*</span></label>
+                    <textarea asp-for="Description" id="csDesc" placeholder="Slider altında görünecek açıklama metni..." maxlength="500"></textarea>
+                    <span asp-validation-for="Description" class="field-validation-error"></span>
+                </div>
+
+                <div class="cs-field">
+                    <label>Arka Plan Görseli URL <span class="cs-required">*</span></label>
+                    <input type="text" asp-for="BackgroundImage" id="csBgImg" placeholder="/carola/assets/images/sliders/slider-1.jpg" oninput="csBgPreview(this.value)" autocomplete="off" />
+                    <span asp-validation-for="BackgroundImage" class="field-validation-error"></span>
+                    <div class="cs-img-preview" id="csBgPreview">
+                        <img id="csBgPreviewImg" src="" alt="Arka Plan Önizleme" />
+                        <div class="cs-preview-ph"><div class="cs-preview-icon">🌄</div><div class="cs-preview-label">Arka plan görseli önizlemesi</div></div>
+                    </div>
+                </div>
+
+                <div class="cs-field">
+                    <label>Araç Görseli URL <span class="cs-required">*</span></label>
+                    <input type="text" asp-for="Image" id="csImg" placeholder="/carola/assets/images/sliders/car.png" oninput="csImgPreview(this.value)" autocomplete="off" />
+                    <span asp-validation-for="Image" class="field-validation-error"></span>
+                    <div class="cs-img-preview" id="csImgPreview">
+                        <img id="csImgPreviewImg" src="" alt="Araç Görseli Önizleme" />
+                        <div class="cs-preview-ph"><div class="cs-preview-icon">🚗</div><div class="cs-preview-label">Araç görseli önizlemesi</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cs-action-bar">
+            <a href="/Admin/Slider/SliderList/" class="btn-outline">✕ İptal</a>
+            <button type="button" class="btn-accent" onclick="csSubmit()">＋ Slider'ı Kaydet</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function csBgPreview(url) {
+        var wrap = document.getElementById('csBgPreview');
+        var img = document.getElementById('csBgPreviewImg');
+        if (!url) { wrap.classList.remove('has-img'); img.src = ''; return; }
+        img.onload = function() { wrap.classList.add('has-img'); };
+        img.onerror = function() { wrap.classList.remove('has-img'); };
+        img.src = url;
+    }
+
+    function csImgPreview(url) {
+        var wrap = document.getElementById('csImgPreview');
+        var img = document.getElementById('csImgPreviewImg');
+        if (!url) { wrap.classList.remove('has-img'); img.src = ''; return; }
+        img.onload = function() { wrap.classList.add('has-img'); };
+        img.onerror = function() { wrap.classList.remove('has-img'); };
+        img.src = url;
+    }
+
+    function csSubmit() {
+        var title = document.getElementById('csTitle').value.trim();
+        var desc = document.getElementById('csDesc').value.trim();
+        var summary = document.getElementById('csValSummary');
+        var msg = document.getElementById('csValMsg');
+        var errors = [];
+        if (!title) errors.push('Başlık');
+        if (!desc) errors.push('Açıklama');
+        if (errors.length > 0) {
+            summary.classList.add('show');
+            msg.textContent = 'Lütfen zorunlu alanları doldurun: ' + errors.join(', ');
+            return;
+        }
+        summary.classList.remove('show');
+        document.getElementById('csForm').submit();
+    }
+</script>
+
+@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

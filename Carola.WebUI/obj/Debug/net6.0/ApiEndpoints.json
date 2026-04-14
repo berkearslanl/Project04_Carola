@@ -1,0 +1,18 @@
+[
+  {
+    "ContainingType": "Carola.WebUI.Controllers.ChatController",
+    "Method": "Send",
+    "RelativePath": "api/Chat/send",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Carola.WebUI.Controllers.ChatRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

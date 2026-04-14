@@ -1,0 +1,81 @@
+@model List<ResultCarDto>
+<style>
+    .single-featured-car-image {
+        width: 100%;
+        height: 220px;
+        overflow: hidden;
+        border-radius: 12px;
+    }
+
+        .single-featured-car-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+
+        .single-featured-car-image:hover img {
+            transform: scale(1.05);
+        }
+</style>
+<section class="featured-car-section pt_120 pb_90" style="background-image: url(/carola/assets/images/background/most-popular-car.jpg);">
+    <div class="container">
+        <div class="section-title centred mb_60">
+            <span class="sub-title">Popüler Araçlar</span>
+            <h2 class="title">Son Zamanlarda En Çok Tercih Edilen Araçlarımız</h2>
+        </div>
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                    <div class="single-featured-car-block style_two">
+                        <div class="single-featured-car-image">
+                            <a href="#"><img src="@item.ImageUrl" alt=""></a>
+                        </div>
+                        <div class="single-featured-car-content">
+                            @if(item.IsAvailable==true)
+                            {
+                                <div class="single-featured-car-rating text-success">Müsait</div>
+                            }
+                            else
+                            {
+                                <div class="single-featured-car-rating text-danger">Kirada</div>
+                            }
+                            <h5 class="single-featured-car-title"><a href="`#">@item.Brand @item.Model</a></h5>
+                            <div class="single-featured-car-rent-per-day-2"><span>@item.DailyPrice ₺</span>/ Günlük</div>
+                            <div class="border-divider"></div>
+                            <div class="featured-car-info-outer">
+                                <ul class="single-featured-car-info">
+                                    <li><i class="icon-6"></i>@item.FuelType</li>
+                                    <li><i class="icon-30"></i>@item.TransmissionType</li>
+                                </ul>
+                                <ul class="single-featured-car-info">
+                                    <li><i class="icon-28"></i>@item.Mileage km</li>
+                                    <li><i class="icon-29"></i>@item.LuggageCapacity Valiz</li>
+                                </ul>
+                                <ul class="single-featured-car-info">
+                                    <li><i class="icon-8"></i>@item.SeatCount Koltuk</li>
+                                    <li><i class="icon-7"></i>@item.ModelYear</li>
+                                </ul>
+                            </div>
+                            <div class="single-featured-car-book-btn">
+                                @if (item.IsAvailable==false)
+                                {
+                                    <a href="#" class="btn-style-three" style="pointer-events:none;opacity:0.5;">
+                                        Şu An Kullanılamıyor
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="/CarList/Index?carId=@item.CarId" class="btn-style-three">
+                                        Hemen Kirala
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

@@ -1,0 +1,118 @@
+@model List<ResultVideoDto>
+@using Carola.DtoLayer.Dtos.VideoDtos
+@{
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    var totalCount = Model.Count();
+}
+
+<style>
+    :root { --bg-dark:#0d0f14; --bg-dark2:#13161e; --bg-dark3:#1a1e2a; --accent:#e8ff47; --accent-dim:rgba(232,255,71,.12); --accent2:#4f8dff; --accent2-dim:rgba(79,141,255,.12); --danger:#ff5259; --border:rgba(255,255,255,.07); --text:#e2e8f0; --text-muted:#7a8499; --radius:12px; --radius-lg:18px; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    .vl-root { padding:28px; font-family:'DM Sans','Segoe UI',sans-serif; color:var(--text); }
+    .vl-breadcrumb { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+    .vl-breadcrumb span { color:var(--text); }
+    .vl-page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
+    .vl-page-title { font-family:'Syne',Georgia,sans-serif; font-size:26px; font-weight:700; color:var(--text); line-height:1; }
+    .vl-page-subtitle { font-size:13px; color:var(--text-muted); margin-top:5px; }
+    .btn-accent { background:var(--accent); color:#0d0f14; border:none; border-radius:10px; padding:9px 18px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:7px; text-decoration:none; transition:opacity .2s; }
+    .btn-accent:hover { opacity:.85; color:#0d0f14; }
+    .btn-edit { background:var(--accent2-dim); color:var(--accent2); border:1px solid rgba(79,141,255,.25); border-radius:8px; padding:6px 13px; font-size:12px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:5px; text-decoration:none; }
+    .btn-edit:hover { background:rgba(79,141,255,.2); color:var(--accent2); }
+    .btn-danger { background:rgba(255,82,89,.1); color:var(--danger); border:1px solid rgba(255,82,89,.2); border-radius:8px; padding:6px 13px; font-size:12px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:5px; text-decoration:none; }
+    .btn-danger:hover { background:rgba(255,82,89,.18); color:var(--danger); }
+    .vl-stat-card { background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; display:inline-flex; align-items:center; gap:14px; margin-bottom:22px; }
+    .vl-stat-icon { width:40px; height:40px; border-radius:10px; background:var(--accent-dim); color:var(--accent); display:grid; place-items:center; font-size:18px; }
+    .vl-stat-num { font-family:'Syne',sans-serif; font-size:24px; font-weight:700; }
+    .vl-stat-label { font-size:12px; color:var(--text-muted); }
+    .vl-table { width:100%; border-collapse:collapse; background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+    .vl-table th { background:var(--bg-dark3); padding:12px 16px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.6px; color:var(--text-muted); text-align:left; border-bottom:1px solid var(--border); }
+    .vl-table td { padding:14px 16px; font-size:13px; color:var(--text); border-bottom:1px solid var(--border); vertical-align:middle; }
+    .vl-table tr:last-child td { border-bottom:none; }
+    .vl-table tr:hover td { background:rgba(255,255,255,.02); }
+    .vl-id-badge { display:inline-block; background:var(--accent-dim); border:1px solid rgba(232,255,71,.2); color:var(--accent); border-radius:6px; padding:2px 8px; font-size:11px; font-weight:600; }
+    .vl-url-cell { color:var(--text-muted); font-size:12px; max-width:350px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .vl-actions { display:flex; gap:8px; }
+    .vl-modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+    .vl-modal-backdrop.open { display:flex; }
+    .vl-modal { background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px 28px 28px; width:100%; max-width:380px; text-align:center; position:relative; }
+    .vl-modal-close { position:absolute; top:14px; right:16px; background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer; }
+    .vl-modal-icon { font-size:38px; margin-bottom:10px; }
+    .vl-modal-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; margin-bottom:10px; }
+    .vl-modal-msg { font-size:13px; color:var(--text-muted); line-height:1.65; margin-bottom:24px; }
+    .vl-modal-actions { display:flex; gap:10px; justify-content:center; }
+</style>
+
+<div class="vl-root">
+    <div class="vl-breadcrumb">İçerik Yönetimi <span>›</span> <span>Video Listesi</span></div>
+
+    <div class="vl-page-header">
+        <div>
+            <h1 class="vl-page-title">Video Yönetimi</h1>
+            <p class="vl-page-subtitle">Ana sayfadaki video bölümünü yönetin.</p>
+        </div>
+        <a href="/Admin/Video/CreateVideo/" class="btn-accent">＋ Yeni Video Ekle</a>
+    </div>
+
+    <div class="vl-stat-card">
+        <div class="vl-stat-icon">🎬</div>
+        <div>
+            <div class="vl-stat-num">@totalCount</div>
+            <div class="vl-stat-label">Toplam Video</div>
+        </div>
+    </div>
+
+    <table class="vl-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Video URL</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr><td colspan="3" style="text-align:center;padding:40px;color:var(--text-muted);">Henüz video eklenmemiş.</td></tr>
+            }
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><span class="vl-id-badge">#@item.VideoId</span></td>
+                    <td class="vl-url-cell" title="@item.VideoUrl">@item.VideoUrl</td>
+                    <td>
+                        <div class="vl-actions">
+                            <a href="/Admin/Video/UpdateVideo/@item.VideoId" class="btn-edit">✏️ Düzenle</a>
+                            <button class="btn-danger" onclick="vlConfirmDelete(@item.VideoId)">🗑️ Sil</button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="vl-modal-backdrop" id="vlConfirmModal">
+    <div class="vl-modal">
+        <button class="vl-modal-close" onclick="vlCloseModal()">✕</button>
+        <div class="vl-modal-icon">🗑️</div>
+        <div class="vl-modal-title">Videoyu Sil</div>
+        <p class="vl-modal-msg" id="vlConfirmMsg"></p>
+        <div class="vl-modal-actions">
+            <button class="btn-accent" onclick="vlCloseModal()" style="background:var(--bg-dark3);color:var(--text);border:1px solid var(--border);">İptal</button>
+            <form id="vlDeleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-danger">🗑️ Evet, Sil</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function vlConfirmDelete(id) {
+        document.getElementById('vlConfirmMsg').innerHTML = `<strong>#${id}</strong> numaralı videoyu silmek istediğinizden emin misiniz?`;
+        document.getElementById('vlDeleteForm').action = `/Admin/Video/DeleteVideo/${id}`;
+        document.getElementById('vlConfirmModal').classList.add('open');
+    }
+    function vlCloseModal() { document.getElementById('vlConfirmModal').classList.remove('open'); }
+    document.getElementById('vlConfirmModal').addEventListener('click', function(e) { if (e.target === this) vlCloseModal(); });
+</script>

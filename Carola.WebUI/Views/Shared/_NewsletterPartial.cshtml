@@ -1,0 +1,11 @@
+<div class="footer_widget footer_newsletter_widget">
+    <h4 class="footer_widget_title">Bültene Abone Ol</h4>
+    <p>Sera gazı emisyonlarına yatırım yaparak küresel karbon ayak izimizi azaltıyoruz.</p>
+    <form asp-controller="Newsletter" asp-action="Subscribe" method="post" class="subscribe-form">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <input type="email" name="email" placeholder="E-posta Adresiniz" required>
+            <button type="submit">Abone Ol</button>
+        </div>
+    </form>
+</div>

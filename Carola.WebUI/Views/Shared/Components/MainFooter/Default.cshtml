@@ -1,0 +1,60 @@
+<!-- Ana Footer -->
+<footer class="main_footer" style="background-image: url(https://i.hizliresim.com/q5d9g5v.png);">
+    <div class="container">
+        <div class="footer-top-outer">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                    <div class="footer_widget footer_about_widget">
+                        <figure class="footer_widget_logo">
+                            <a href="/"><img src="/carola/assets/images/footer-logo.png" alt="Carola Footer Logo"></a>
+                        </figure>
+                        <p>Bağcılar Mahallesi, Bağcılar Cad. No:12, İstanbul, Türkiye</p>
+                        <ul class="footer-info-list">
+                            <li><a href="mailto:info@carola.com.tr">info@carola.com.tr</a></li>
+                            <li><a href="tel:+902121234567">+90 212 123 45 67</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
+                    <div class="footer_widget footer_resources_widget">
+                        <h4 class="footer_widget_title">Kaynaklar</h4>
+                        <ul class="resources_page_list">
+                            <li><a href="#">Ekibimiz Hakkında</a></li>
+                            <li><a href="#">Politikalarımız</a></li>
+                            <li><a href="#">Kariyer</a></li>
+                            <li><a href="#">Basın</a></li>
+                            <li><a href="#">Açık Yol</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12">
+                    <div class="footer_widget footer_community_widget">
+                        <h4 class="footer_widget_title">Topluluk</h4>
+                        <ul class="community_page_list">
+                            <li><a href="#">Bülten</a></li>
+                            <li><a href="#">Değerlendirmeler</a></li>
+                            <li><a href="#">Referanslar</a></li>
+                            <li><a href="#">Sosyal Grup</a></li>
+                            <li><a href="#">Yardım Masası</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                    <!-- Bülten bölümü ayrı Partial View olarak render edilir -->
+                    @await Html.PartialAsync("_NewsletterPartial")
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom-outer">
+            <div class="copyright">Telif Hakkı &copy; 2024 &nbsp;<a href="/">Carola</a>, Tüm Hakları Saklıdır.</div>
+            <ul class="social-links">
+                <li><strong>Bizi Takip Edin:</strong></li>
+                <li><a href="#"><i class="fab fa-square-facebook"></i></a></li>
+                <li><a href="#"><i class="fab fa-square-twitter"></i></a></li>
+                <li><a href="#"><i class="fab fa-linkedin"></i></a></li>
+                <li><a href="#"><i class="fab fa-dribbble"></i></a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+<!-- Ana Footer Sonu -->

@@ -1,0 +1,198 @@
+@{
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+<style>
+    .st-root { padding: 28px; font-family: 'DM Sans','Segoe UI',sans-serif; color: var(--text); max-width: 860px; }
+    .st-page-title { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .st-page-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; }
+
+    .st-section { background: var(--bg-dark2); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 20px; overflow: hidden; }
+    .st-section-head { display: flex; align-items: center; gap: 10px; padding: 16px 22px; border-bottom: 1px solid var(--border); }
+    .st-section-icon { font-size: 18px; }
+    .st-section-title { font-size: 14px; font-weight: 600; color: var(--text); }
+    .st-section-body { padding: 22px; display: flex; flex-direction: column; gap: 18px; }
+
+    .st-field { display: flex; flex-direction: column; gap: 6px; }
+    .st-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
+    .st-input { background: var(--bg-dark3); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 13px; padding: 10px 14px; width: 100%; outline: none; transition: border-color .2s; }
+    .st-input:focus { border-color: rgba(232,255,71,.4); }
+    .st-input::placeholder { color: var(--text-muted); }
+    .st-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @@media(max-width:600px){ .st-row{ grid-template-columns:1fr; } }
+
+    .st-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; }
+    .st-toggle-info { display: flex; flex-direction: column; gap: 2px; }
+    .st-toggle-label { font-size: 13px; font-weight: 600; color: var(--text); }
+    .st-toggle-desc { font-size: 11px; color: var(--text-muted); }
+    .st-toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+    .st-toggle input { opacity: 0; width: 0; height: 0; }
+    .st-toggle-slider { position: absolute; inset: 0; background: var(--bg-dark3); border: 1px solid var(--border); border-radius: 999px; cursor: pointer; transition: background .2s; }
+    .st-toggle-slider::before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: var(--text-muted); border-radius: 50%; transition: transform .2s, background .2s; }
+    .st-toggle input:checked + .st-toggle-slider { background: var(--accent-dim); border-color: rgba(232,255,71,.4); }
+    .st-toggle input:checked + .st-toggle-slider::before { transform: translateX(18px); background: var(--accent); }
+
+    .st-divider { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
+
+    .st-btn-row { display: flex; gap: 10px; justify-content: flex-end; padding: 14px 22px; border-top: 1px solid var(--border); }
+    .st-btn { padding: 9px 22px; border-radius: 10px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: opacity .2s, transform .15s; }
+    .st-btn:hover { opacity: .85; transform: translateY(-1px); }
+    .st-btn.primary { background: var(--accent); color: #000; }
+    .st-btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+
+    .st-danger-zone { border-color: rgba(255,82,89,.3); }
+    .st-danger-zone .st-section-head { border-bottom-color: rgba(255,82,89,.2); }
+    .st-danger-zone .st-section-icon { color: var(--danger); }
+    .st-danger-zone .st-section-title { color: var(--danger); }
+    .st-btn.danger { background: rgba(255,82,89,.1); border: 1px solid rgba(255,82,89,.3); color: var(--danger); }
+    .st-btn.danger:hover { background: rgba(255,82,89,.2); }
+</style>
+
+<div class="st-root">
+
+    <div class="st-page-title">⚙️ Ayarlar</div>
+    <div class="st-page-sub">Site ve panel tercihlerinizi buradan yönetin.</div>
+
+    <!-- Genel Bilgiler -->
+    <div class="st-section">
+        <div class="st-section-head">
+            <div class="st-section-icon">🏢</div>
+            <div class="st-section-title">Şirket Bilgileri</div>
+        </div>
+        <div class="st-section-body">
+            <div class="st-field">
+                <label class="st-label">Şirket Adı</label>
+                <input class="st-input" type="text" placeholder="Örn: Carola Rent a Car" />
+            </div>
+            <div class="st-row">
+                <div class="st-field">
+                    <label class="st-label">E-posta</label>
+                    <input class="st-input" type="email" placeholder="info@carola.com" />
+                </div>
+                <div class="st-field">
+                    <label class="st-label">Telefon</label>
+                    <input class="st-input" type="tel" placeholder="+90 (555) 000 00 00" />
+                </div>
+            </div>
+            <div class="st-field">
+                <label class="st-label">Adres</label>
+                <input class="st-input" type="text" placeholder="Şirket açık adresi" />
+            </div>
+            <div class="st-field">
+                <label class="st-label">Web Sitesi</label>
+                <input class="st-input" type="url" placeholder="https://carola.com" />
+            </div>
+        </div>
+        <div class="st-btn-row">
+            <button class="st-btn ghost">Sıfırla</button>
+            <button class="st-btn primary">Kaydet</button>
+        </div>
+    </div>
+
+    <!-- Rezervasyon Ayarları -->
+    <div class="st-section">
+        <div class="st-section-head">
+            <div class="st-section-icon">📋</div>
+            <div class="st-section-title">Rezervasyon Ayarları</div>
+        </div>
+        <div class="st-section-body">
+            <div class="st-toggle-row">
+                <div class="st-toggle-info">
+                    <div class="st-toggle-label">Otomatik Onay</div>
+                    <div class="st-toggle-desc">Yeni rezervasyonlar otomatik olarak onaylansın</div>
+                </div>
+                <label class="st-toggle">
+                    <input type="checkbox" />
+                    <span class="st-toggle-slider"></span>
+                </label>
+            </div>
+            <hr class="st-divider" />
+            <div class="st-toggle-row">
+                <div class="st-toggle-info">
+                    <div class="st-toggle-label">E-posta Bildirimi</div>
+                    <div class="st-toggle-desc">Yeni rezervasyonda e-posta gönder</div>
+                </div>
+                <label class="st-toggle">
+                    <input type="checkbox" checked />
+                    <span class="st-toggle-slider"></span>
+                </label>
+            </div>
+            <hr class="st-divider" />
+            <div class="st-toggle-row">
+                <div class="st-toggle-info">
+                    <div class="st-toggle-label">Hafta Sonu Kiralama</div>
+                    <div class="st-toggle-desc">Hafta sonu rezervasyon alımı aktif olsun</div>
+                </div>
+                <label class="st-toggle">
+                    <input type="checkbox" checked />
+                    <span class="st-toggle-slider"></span>
+                </label>
+            </div>
+            <hr class="st-divider" />
+            <div class="st-row">
+                <div class="st-field">
+                    <label class="st-label">Min. Kiralama Süresi (gün)</label>
+                    <input class="st-input" type="number" min="1" value="1" />
+                </div>
+                <div class="st-field">
+                    <label class="st-label">Max. Kiralama Süresi (gün)</label>
+                    <input class="st-input" type="number" min="1" value="30" />
+                </div>
+            </div>
+        </div>
+        <div class="st-btn-row">
+            <button class="st-btn ghost">Sıfırla</button>
+            <button class="st-btn primary">Kaydet</button>
+        </div>
+    </div>
+
+    <!-- Güvenlik -->
+    <div class="st-section">
+        <div class="st-section-head">
+            <div class="st-section-icon">🔐</div>
+            <div class="st-section-title">Güvenlik</div>
+        </div>
+        <div class="st-section-body">
+            <div class="st-field">
+                <label class="st-label">Mevcut Şifre</label>
+                <input class="st-input" type="password" placeholder="••••••••" />
+            </div>
+            <div class="st-row">
+                <div class="st-field">
+                    <label class="st-label">Yeni Şifre</label>
+                    <input class="st-input" type="password" placeholder="••••••••" />
+                </div>
+                <div class="st-field">
+                    <label class="st-label">Yeni Şifre (Tekrar)</label>
+                    <input class="st-input" type="password" placeholder="••••••••" />
+                </div>
+            </div>
+        </div>
+        <div class="st-btn-row">
+            <button class="st-btn primary">Şifreyi Güncelle</button>
+        </div>
+    </div>
+
+    <!-- Tehlikeli Bölge -->
+    <div class="st-section st-danger-zone">
+        <div class="st-section-head">
+            <div class="st-section-icon">⚠️</div>
+            <div class="st-section-title">Tehlikeli Bölge</div>
+        </div>
+        <div class="st-section-body">
+            <div class="st-toggle-row">
+                <div class="st-toggle-info">
+                    <div class="st-toggle-label">Bakım Modu</div>
+                    <div class="st-toggle-desc">Site ziyaretçilere kapatılır, sadece admin erişir</div>
+                </div>
+                <label class="st-toggle">
+                    <input type="checkbox" />
+                    <span class="st-toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+        <div class="st-btn-row">
+            <button class="st-btn danger">Tüm Cache'i Temizle</button>
+        </div>
+    </div>
+
+</div>

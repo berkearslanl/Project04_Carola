@@ -1,0 +1,487 @@
+@model GetReservationByIdDto
+@{
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    ViewData["Title"] = "Rezervasyon Yönetimi";
+    ViewData["Desc"]  = "Rezervasyon Güncelleme";
+}
+
+<style>
+    :root {
+        --bg-dark:     #0d0f14;
+        --bg-dark2:    #13161e;
+        --bg-dark3:    #1a1e2a;
+        --accent:      #e8ff47;
+        --accent-dim:  rgba(232,255,71,.12);
+        --accent2:     #4f8dff;
+        --accent2-dim: rgba(79,141,255,.12);
+        --accent3:     #ff9f47;
+        --accent3-dim: rgba(255,159,71,.12);
+        --danger:      #ff5259;
+        --success:     #30e0a1;
+        --border:      rgba(255,255,255,.07);
+        --text:        #e2e8f0;
+        --text-muted:  #7a8499;
+        --radius:      12px;
+        --radius-lg:   18px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .rf-root { padding: 28px; font-family: 'DM Sans', 'Segoe UI', sans-serif; color: var(--text); }
+
+    .rf-breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+    .rf-breadcrumb a { color: var(--text-muted); text-decoration: none; transition: color .2s; }
+    .rf-breadcrumb a:hover { color: var(--accent); }
+    .rf-breadcrumb span { color: var(--text); }
+
+    .rf-page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+    .rf-header-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--accent-dim); border: 1px solid rgba(232,255,71,.2); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .rf-page-title { font-family: 'Syne', Georgia, sans-serif; font-size: 24px; font-weight: 700; line-height: 1; }
+    .rf-page-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 5px; }
+
+    .rf-layout { display: grid; grid-template-columns: 1fr 260px; gap: 18px; align-items: start; }
+    @@media (max-width: 720px) { .rf-layout { grid-template-columns: 1fr; } }
+
+    .rf-card { background: var(--bg-dark2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; animation: rfFadeUp .35s ease both; }
+    @@keyframes rfFadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .rf-section-header { display: flex; align-items: center; gap: 10px; padding: 16px 22px; border-bottom: 1px solid var(--border); background: var(--bg-dark3); }
+    .rf-section-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .rf-section-icon.yellow { background: var(--accent-dim); }
+    .rf-section-icon.blue   { background: var(--accent2-dim); }
+    .rf-section-icon.orange { background: var(--accent3-dim); }
+    .rf-section-icon.green  { background: rgba(48,224,161,.1); }
+    .rf-section-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; }
+    .rf-section-desc  { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+    .rf-form-body { padding: 22px; }
+    .rf-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .rf-grid-1 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @@media (max-width: 540px) { .rf-grid-2 { grid-template-columns: 1fr; } }
+
+    .rf-field { display: flex; flex-direction: column; gap: 7px; }
+    .rf-field.full { grid-column: 1 / -1; }
+
+    .rf-label { font-size: 11px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 5px; text-transform: uppercase; letter-spacing: .04em; }
+    .rf-required { color: var(--danger); font-size: 13px; line-height: 1; }
+
+    .rf-input-wrap { position: relative; }
+    .rf-input-wrap .rf-input { padding-left: 40px; }
+    .rf-input-prefix { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--text-muted); pointer-events: none; }
+
+    .rf-input, .rf-select, .rf-textarea {
+        background: var(--bg-dark3); border: 1px solid var(--border);
+        border-radius: var(--radius); color: var(--text); font-size: 13px;
+        font-family: inherit; padding: 10px 14px; outline: none; width: 100%;
+        transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+    .rf-input:hover, .rf-select:hover { border-color: rgba(255,255,255,.15); }
+    .rf-input:focus, .rf-select:focus, .rf-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); background: rgba(232,255,71,.03); }
+    .rf-input::placeholder, .rf-textarea::placeholder { color: var(--text-muted); }
+    .rf-input.error, .rf-select.error, .rf-textarea.error { border-color: rgba(255,82,89,.5) !important; box-shadow: 0 0 0 3px rgba(255,82,89,.1) !important; }
+    .rf-textarea { resize: vertical; min-height: 90px; padding: 10px 14px; }
+    .rf-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a8499' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+    .rf-select option { background: var(--bg-dark2); }
+
+    .rf-hint { font-size: 11px; color: var(--text-muted); }
+    .rf-val-msg { font-size: 11px; color: var(--danger); display: flex; align-items: center; gap: 3px; }
+
+    .rf-sidebar { display: flex; flex-direction: column; gap: 14px; }
+
+    .rf-summary-card { background: var(--bg-dark2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; animation: rfFadeUp .4s ease .05s both; }
+    .rf-summary-body { padding: 18px; }
+    .rf-summary-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+    .rf-summary-row:last-child { margin-bottom: 0; }
+    .rf-summary-icon { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+    .rf-summary-icon.blue   { background: var(--accent2-dim); }
+    .rf-summary-icon.yellow { background: var(--accent-dim); }
+    .rf-summary-icon.orange { background: var(--accent3-dim); }
+    .rf-summary-icon.green  { background: rgba(48,224,161,.08); }
+    .rf-summary-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+    .rf-summary-val   { font-size: 12px; color: var(--text); }
+    .rf-summary-empty { font-size: 11px; color: rgba(255,255,255,.2); font-style: italic; }
+
+    /* ID badge */
+    .rf-id-badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--accent-dim); border: 1px solid rgba(232,255,71,.2);
+        border-radius: 8px; padding: 6px 12px;
+        font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+        color: var(--accent); letter-spacing: .02em;
+    }
+
+    .rf-tips-card { background: var(--bg-dark2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; animation: rfFadeUp .4s ease .1s both; }
+    .rf-tips-title { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .04em; }
+    .rf-tip { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 9px; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .rf-tip:last-child { margin-bottom: 0; }
+    .rf-tip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 6px; }
+
+    .rf-val-summary { background: rgba(255,82,89,.08); border: 1px solid rgba(255,82,89,.2); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 18px; display: none; }
+    .rf-val-summary.show { display: block; }
+    .rf-val-summary-title { font-size: 13px; font-weight: 600; color: var(--danger); margin-bottom: 6px; }
+    .rf-val-summary ul { padding-left: 16px; }
+    .rf-val-summary li  { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+    .rf-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 18px 22px; border-top: 1px solid var(--border); background: var(--bg-dark3); }
+
+    .btn-accent { background: var(--accent); color: #0d0f14; border: none; border-radius: 10px; padding: 10px 22px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; text-decoration: none; transition: opacity .2s; }
+    .btn-accent:hover { opacity: .85; color: #0d0f14; }
+    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: 10px; padding: 10px 18px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; text-decoration: none; transition: all .2s; }
+    .btn-ghost:hover { background: var(--bg-dark3); color: var(--text); border-color: rgba(255,255,255,.15); }
+
+    .rf-status-pill { display: inline-flex; align-items: center; gap: 4px; border-radius: 6px; padding: 3px 9px; font-size: 11px; font-weight: 600; }
+    .rf-status-pill.beklemede  { background: rgba(255,181,71,.12);  color: #ffb547; border: 1px solid rgba(255,181,71,.25); }
+    .rf-status-pill.onaylandi  { background: rgba(48,224,161,.10);  color: #30e0a1; border: 1px solid rgba(48,224,161,.25); }
+    .rf-status-pill.iptal      { background: rgba(255,82,89,.10);   color: #ff5259; border: 1px solid rgba(255,82,89,.25); }
+    .rf-status-pill.tamamlandi { background: rgba(79,141,255,.10);  color: #4f8dff; border: 1px solid rgba(79,141,255,.25); }
+</style>
+
+<div class="rf-root">
+
+    <div class="rf-breadcrumb">
+        <a asp-controller="Reservation" asp-action="ReservationList">Rezervasyon Yönetimi</a>
+        <span>›</span>
+        <span>Rezervasyon Güncelle</span>
+    </div>
+
+    <div class="rf-page-header">
+        <div class="rf-header-icon">✏️</div>
+        <div>
+            <h1 class="rf-page-title">Rezervasyon Güncelle</h1>
+            <p class="rf-page-subtitle">
+                Mevcut rezervasyon bilgilerini düzenleyin.
+                <span class="rf-id-badge" style="margin-left:10px;font-size:12px;">📋 #@Model.ReservationId</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Validation Summary -->
+    <div class="rf-val-summary" id="rfValSummary">
+        <div class="rf-val-summary-title">⚠️ Lütfen aşağıdaki hataları düzeltin</div>
+        <ul id="rfValList"></ul>
+    </div>
+
+    <form method="post" asp-action="UpdateReservation" asp-controller="Reservation" id="rfForm" novalidate>
+        @Html.AntiForgeryToken()
+
+        <!-- Hidden ID -->
+        <input type="hidden" asp-for="ReservationId" />
+
+        <div class="rf-layout">
+
+            <!-- Left: Form -->
+            <div>
+
+                <!-- Araç & Müşteri -->
+                <div class="rf-card" style="margin-bottom:16px;">
+                    <div class="rf-section-header">
+                        <div class="rf-section-icon yellow">🚗</div>
+                        <div>
+                            <div class="rf-section-title">Araç ve Müşteri</div>
+                            <div class="rf-section-desc">Araç ID ve Müşteri ID bilgileri</div>
+                        </div>
+                    </div>
+                    <div class="rf-form-body">
+                        <div class="rf-grid-2">
+
+                            <div class="rf-field">
+                                <label class="rf-label">Araç ID <span class="rf-required">*</span></label>
+                                <div class="rf-input-wrap">
+                                    <span class="rf-input-prefix">🚗</span>
+                                    <input asp-for="CarId" type="number" min="1" class="rf-input" oninput="rfPreview()" />
+                                </div>
+                                <span asp-validation-for="CarId" class="rf-val-msg"></span>
+                            </div>
+
+                            <div class="rf-field">
+                                <label class="rf-label">Müşteri ID <span class="rf-required">*</span></label>
+                                <div class="rf-input-wrap">
+                                    <span class="rf-input-prefix">👤</span>
+                                    <input asp-for="CustomerId" type="number" min="1" class="rf-input" oninput="rfPreview()" />
+                                </div>
+                                <span asp-validation-for="CustomerId" class="rf-val-msg"></span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarihler -->
+                <div class="rf-card" style="margin-bottom:16px;">
+                    <div class="rf-section-header">
+                        <div class="rf-section-icon blue">📅</div>
+                        <div>
+                            <div class="rf-section-title">Tarih Bilgileri</div>
+                            <div class="rf-section-desc">Alış ve iade tarihleri</div>
+                        </div>
+                    </div>
+                    <div class="rf-form-body">
+                        <div class="rf-grid-2">
+
+                            <div class="rf-field">
+                                <label class="rf-label">Alış Tarihi <span class="rf-required">*</span></label>
+                                <div class="rf-input-wrap">
+                                    <span class="rf-input-prefix">📅</span>
+                                    <input asp-for="PickupDate" type="date" class="rf-input" oninput="rfPreview()" />
+                                </div>
+                                <span asp-validation-for="PickupDate" class="rf-val-msg"></span>
+                            </div>
+
+                            <div class="rf-field">
+                                <label class="rf-label">İade Tarihi <span class="rf-required">*</span></label>
+                                <div class="rf-input-wrap">
+                                    <span class="rf-input-prefix">📅</span>
+                                    <input asp-for="ReturnDate" type="date" class="rf-input" oninput="rfPreview()" />
+                                </div>
+                                <span asp-validation-for="ReturnDate" class="rf-val-msg"></span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lokasyonlar & Fiyat -->
+                <div class="rf-card" style="margin-bottom:16px;">
+                    <div class="rf-section-header">
+                        <div class="rf-section-icon orange">📍</div>
+                        <div>
+                            <div class="rf-section-title">Lokasyon ve Fiyat</div>
+                            <div class="rf-section-desc">Alış/iade lokasyonu ve toplam tutar</div>
+                        </div>
+                    </div>
+                    <div class="rf-form-body">
+                        <div class="rf-grid-2">
+
+                            <div class="rf-field">
+                                <label class="rf-label">Alış Lokasyon ID <span class="rf-required">*</span></label>
+                                <div class="rf-input-wrap">
+                                    <span class="rf-input-prefix">📍</span>
+                                    <input asp-for="PickupLocationId" type="number" min="1" class="rf-input" oninput="rfPreview()" />
+                                </div>
+                                <span asp-validation-for="PickupLocationId" class="rf-val-msg"></span>
+                            </div>
+
+                            <div class="rf-field">
+                                <label class="rf-label">İade Lokasyon ID <span class="rf-required">*</span></label>
+                                <div class="rf-input-wrap">
+                                    <span class="rf-input-prefix">🏁</span>
+                                    <input asp-for="ReturnLocationId" type="number" min="1" class="rf-input" oninput="rfPreview()" />
+                                </div>
+                                <span asp-validation-for="ReturnLocationId" class="rf-val-msg"></span>
+                            </div>
+
+                            <div class="rf-field full">
+                                <label class="rf-label">Toplam Fiyat (₺) <span class="rf-required">*</span></label>
+                                <div class="rf-input-wrap">
+                                    <span class="rf-input-prefix">₺</span>
+                                    <input type="number"
+                                           name="TotalPrice"
+                                           id="TotalPrice"
+                                           step="0.01"
+                                           min="0.01"
+                                           class="rf-input"
+                                           oninput="rfPreview()"
+                                           value="@Model.TotalPrice.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                </div>
+                                <span asp-validation-for="TotalPrice" class="rf-val-msg"></span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Durum & Açıklama -->
+                <div class="rf-card">
+                    <div class="rf-section-header">
+                        <div class="rf-section-icon green">⚙️</div>
+                        <div>
+                            <div class="rf-section-title">Durum ve Açıklama</div>
+                            <div class="rf-section-desc">Rezervasyon durumu ve ek notlar</div>
+                        </div>
+                    </div>
+                    <div class="rf-form-body">
+                        <div class="rf-grid-1">
+
+                            <div class="rf-field">
+                                <label class="rf-label">Rezervasyon Durumu <span class="rf-required">*</span></label>
+                                <select asp-for="ReservationStatus" class="rf-select" onchange="rfPreview()">
+                                    <option value="">-- Durum Seçin --</option>
+                                    <option value="Beklemede">⏳ Beklemede</option>
+                                    <option value="Onaylandı">✅ Onaylandı</option>
+                                    <option value="İptal">❌ İptal</option>
+                                    <option value="Tamamlandı">🏁 Tamamlandı</option>
+                                </select>
+                                <span asp-validation-for="ReservationStatus" class="rf-val-msg"></span>
+                            </div>
+
+                            <div class="rf-field">
+                                <label class="rf-label">Açıklama</label>
+                                <textarea asp-for="Description" class="rf-textarea"
+                                          placeholder="İsteğe bağlı notlar... (maks. 500 karakter)"
+                                          maxlength="500"
+                                          oninput="rfPreview()"></textarea>
+                                <span asp-validation-for="Description" class="rf-val-msg"></span>
+                                <span class="rf-hint">En fazla 500 karakter</span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="rf-actions">
+                        <a asp-controller="Reservation" asp-action="ReservationList" class="btn-ghost">İptal</a>
+                        <button type="submit" class="btn-accent" id="rfSubmitBtn">💾 Güncelle</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right: Sidebar -->
+            <div class="rf-sidebar">
+
+                <!-- Live Summary -->
+                <div class="rf-summary-card">
+                    <div class="rf-section-header">
+                        <div class="rf-section-icon green">👁️</div>
+                        <div>
+                            <div class="rf-section-title">Canlı Özet</div>
+                            <div class="rf-section-desc">Güncel bilgilerin önizlemesi</div>
+                        </div>
+                    </div>
+                    <div class="rf-summary-body">
+                        <div class="rf-summary-row">
+                            <div class="rf-summary-icon yellow">🚗</div>
+                            <div>
+                                <div class="rf-summary-label">Araç ID</div>
+                                <div class="rf-summary-val" id="rfPrevCar">—</div>
+                            </div>
+                        </div>
+                        <div class="rf-summary-row">
+                            <div class="rf-summary-icon blue">👤</div>
+                            <div>
+                                <div class="rf-summary-label">Müşteri ID</div>
+                                <div class="rf-summary-val" id="rfPrevCustomer">—</div>
+                            </div>
+                        </div>
+                        <div class="rf-summary-row">
+                            <div class="rf-summary-icon orange">📅</div>
+                            <div>
+                                <div class="rf-summary-label">Tarih Aralığı</div>
+                                <div class="rf-summary-val" id="rfPrevDates">—</div>
+                            </div>
+                        </div>
+                        <div class="rf-summary-row">
+                            <div class="rf-summary-icon green">₺</div>
+                            <div>
+                                <div class="rf-summary-label">Toplam Fiyat</div>
+                                <div class="rf-summary-val" id="rfPrevPrice">—</div>
+                            </div>
+                        </div>
+                        <div class="rf-summary-row">
+                            <div class="rf-summary-icon blue">⚙️</div>
+                            <div>
+                                <div class="rf-summary-label">Durum</div>
+                                <div id="rfPrevStatus"><span class="rf-summary-empty" style="font-size:11px;font-style:italic;color:rgba(255,255,255,.2)">—</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tips -->
+                <div class="rf-tips-card">
+                    <div class="rf-tips-title">💡 Güncelleme Notu</div>
+                    <div class="rf-tip"><div class="rf-tip-dot"></div><span>Tüm alanları doğru doldurduğunuzdan emin olun.</span></div>
+                    <div class="rf-tip"><div class="rf-tip-dot"></div><span>Durum değişikliği müşteriye bildirilmelidir.</span></div>
+                    <div class="rf-tip"><div class="rf-tip-dot"></div><span>Tarih değişikliği araç müsaitlik takvimini etkiler.</span></div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function rfPreview() {
+            var carId      = document.getElementById('CarId').value.trim();
+            var customerId = document.getElementById('CustomerId').value.trim();
+            var pickup     = document.getElementById('PickupDate').value;
+            var ret        = document.getElementById('ReturnDate').value;
+            var price      = document.getElementById('TotalPrice').value.trim();
+            var status     = document.getElementById('ReservationStatus').value;
+
+            document.getElementById('rfPrevCar').textContent      = carId      ? '#' + carId      : '—';
+            document.getElementById('rfPrevCustomer').textContent  = customerId ? '#' + customerId : '—';
+
+            var datesEl = document.getElementById('rfPrevDates');
+            if (pickup && ret) {
+                var d1 = new Date(pickup).toLocaleDateString('tr-TR', {day:'2-digit',month:'short'});
+                var d2 = new Date(ret).toLocaleDateString('tr-TR', {day:'2-digit',month:'short'});
+                datesEl.textContent = d1 + ' → ' + d2;
+            } else {
+                datesEl.textContent = '—';
+            }
+
+            var priceEl = document.getElementById('rfPrevPrice');
+            priceEl.textContent = (price && parseFloat(price) > 0)
+                ? '₺' + parseFloat(price).toLocaleString('tr-TR', {minimumFractionDigits:2})
+                : '—';
+
+            var statusEl = document.getElementById('rfPrevStatus');
+            if (status) {
+                var cls = '';
+                if (status === 'Beklemede')  cls = 'beklemede';
+                if (status === 'Onaylandı')  cls = 'onaylandi';
+                if (status === 'İptal')      cls = 'iptal';
+                if (status === 'Tamamlandı') cls = 'tamamlandi';
+                statusEl.innerHTML = '<span class="rf-status-pill ' + cls + '">' + status + '</span>';
+            } else {
+                statusEl.innerHTML = '<span style="font-size:11px;font-style:italic;color:rgba(255,255,255,.2)">—</span>';
+            }
+        }
+
+        document.getElementById('rfForm').addEventListener('submit', function(e) {
+            var errors = [];
+
+            var carId      = parseInt(document.getElementById('CarId').value);
+            var customerId = parseInt(document.getElementById('CustomerId').value);
+            var pickup     = document.getElementById('PickupDate').value;
+            var ret        = document.getElementById('ReturnDate').value;
+            var pickLocId  = parseInt(document.getElementById('PickupLocationId').value);
+            var retLocId   = parseInt(document.getElementById('ReturnLocationId').value);
+            var price      = parseFloat(document.getElementById('TotalPrice').value);
+            var status     = document.getElementById('ReservationStatus').value;
+
+            if (!carId || carId < 1)          errors.push('Geçerli bir araç ID girilmelidir.');
+            if (!customerId || customerId < 1) errors.push('Geçerli bir müşteri ID girilmelidir.');
+            if (!pickup)                       errors.push('Alış tarihi zorunludur.');
+            if (!ret)                          errors.push('İade tarihi zorunludur.');
+            if (pickup && ret && new Date(ret) <= new Date(pickup)) errors.push('İade tarihi alış tarihinden sonra olmalıdır.');
+            if (!pickLocId || pickLocId < 1)   errors.push('Geçerli bir alış lokasyon ID girilmelidir.');
+            if (!retLocId  || retLocId  < 1)   errors.push('Geçerli bir iade lokasyon ID girilmelidir.');
+            if (!price || price <= 0)          errors.push('Toplam fiyat 0\'dan büyük olmalıdır.');
+            if (!status)                       errors.push('Rezervasyon durumu seçilmelidir.');
+
+            var summary = document.getElementById('rfValSummary');
+            var list    = document.getElementById('rfValList');
+
+            if (errors.length) {
+                e.preventDefault();
+                list.innerHTML = errors.map(function(err) { return '<li>' + err + '</li>'; }).join('');
+                summary.classList.add('show');
+                summary.scrollIntoView({ behavior:'smooth', block:'start' });
+            } else {
+                summary.classList.remove('show');
+                var btn = document.getElementById('rfSubmitBtn');
+                btn.disabled = true;
+                btn.innerHTML = '⏳ Güncelleniyor...';
+            }
+        });
+
+        /* Sayfa açılınca mevcut değerleri preview'a yansıt */
+        document.addEventListener('DOMContentLoaded', function() { rfPreview(); });
+    </script>
+}

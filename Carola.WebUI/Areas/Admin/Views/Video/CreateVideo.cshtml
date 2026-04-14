@@ -1,0 +1,85 @@
+@model CreateVideoDto
+@using Carola.DtoLayer.Dtos.VideoDtos
+@{
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    :root { --bg-dark:#0d0f14; --bg-dark2:#13161e; --bg-dark3:#1a1e2a; --accent:#e8ff47; --accent-dim:rgba(232,255,71,.12); --danger:#ff5259; --border:rgba(255,255,255,.07); --text:#e2e8f0; --text-muted:#7a8499; --radius:12px; --radius-lg:18px; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    .cv-root { padding:28px; font-family:'DM Sans','Segoe UI',sans-serif; color:var(--text); }
+    .cv-breadcrumb { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+    .cv-breadcrumb a { color:var(--text-muted); text-decoration:none; } .cv-breadcrumb a:hover { color:var(--text); } .cv-breadcrumb span { color:var(--text); }
+    .cv-page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
+    .cv-page-title { font-family:'Syne',Georgia,sans-serif; font-size:26px; font-weight:700; color:var(--text); line-height:1; }
+    .cv-page-subtitle { font-size:13px; color:var(--text-muted); margin-top:5px; }
+    .btn-accent { background:var(--accent); color:#0d0f14; border:none; border-radius:10px; padding:9px 20px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:7px; text-decoration:none; transition:opacity .2s; }
+    .btn-accent:hover { opacity:.85; color:#0d0f14; }
+    .btn-outline { background:transparent; color:var(--text-muted); border:1px solid var(--border); border-radius:10px; padding:9px 18px; font-size:13px; font-weight:500; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:7px; text-decoration:none; transition:background .2s,color .2s; }
+    .btn-outline:hover { background:var(--bg-dark2); color:var(--text); }
+    .cv-card { background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:20px; }
+    .cv-card-head { display:flex; align-items:center; gap:10px; padding:16px 20px; border-bottom:1px solid var(--border); }
+    .cv-card-icon { width:32px; height:32px; border-radius:9px; display:grid; place-items:center; font-size:15px; background:var(--accent-dim); color:var(--accent); }
+    .cv-card-title { font-size:14px; font-weight:600; color:var(--text); }
+    .cv-card-subtitle { font-size:12px; color:var(--text-muted); margin-top:1px; }
+    .cv-card-body { padding:20px; }
+    .cv-field { display:flex; flex-direction:column; gap:6px; margin-bottom:18px; }
+    .cv-field:last-child { margin-bottom:0; }
+    .cv-field label { font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; }
+    .cv-required { color:var(--danger); margin-left:3px; }
+    .cv-field input { background:var(--bg-dark3); border:1px solid var(--border); border-radius:10px; color:var(--text); padding:10px 14px; font-size:13px; font-family:inherit; outline:none; width:100%; transition:border .2s,box-shadow .2s; }
+    .cv-field input::placeholder { color:var(--text-muted); }
+    .cv-field input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-dim); }
+    .field-validation-error { font-size:11px; color:var(--danger); }
+    .input-validation-error { border-color:rgba(255,82,89,.5) !important; box-shadow:0 0 0 3px rgba(255,82,89,.1) !important; }
+    .cv-action-bar { display:flex; align-items:center; justify-content:flex-end; gap:10px; padding-top:20px; border-top:1px solid var(--border); margin-top:4px; }
+    .cv-hint { font-size:11px; color:var(--text-muted); margin-top:2px; }
+</style>
+
+<div class="cv-root">
+    <div class="cv-breadcrumb">
+        İçerik Yönetimi <span>›</span>
+        <a href="/Admin/Video/VideoList/">Video Listesi</a>
+        <span>›</span> <span>Yeni Video Ekle</span>
+    </div>
+
+    <div class="cv-page-header">
+        <div>
+            <h1 class="cv-page-title">Yeni Video Ekle</h1>
+            <p class="cv-page-subtitle">Ana sayfaya video URL'si ekleyin.</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <a href="/Admin/Video/VideoList/" class="btn-outline">✕ İptal</a>
+            <button type="submit" form="cvForm" class="btn-accent">＋ Kaydet</button>
+        </div>
+    </div>
+
+    <form id="cvForm" asp-area="Admin" asp-controller="Video" asp-action="CreateVideo" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="cv-card">
+            <div class="cv-card-head">
+                <div class="cv-card-icon">🎬</div>
+                <div>
+                    <div class="cv-card-title">Video Bilgisi</div>
+                    <div class="cv-card-subtitle">YouTube veya diğer video platform URL'sini girin</div>
+                </div>
+            </div>
+            <div class="cv-card-body">
+                <div class="cv-field">
+                    <label>Video URL <span class="cv-required">*</span></label>
+                    <input type="text" asp-for="VideoUrl" placeholder="https://www.youtube.com/watch?v=..." maxlength="1000" autocomplete="off" />
+                    <span asp-validation-for="VideoUrl" class="field-validation-error"></span>
+                    <div class="cv-hint">YouTube, Vimeo veya doğrudan video URL'si kullanabilirsiniz.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cv-action-bar">
+            <a href="/Admin/Video/VideoList/" class="btn-outline">✕ İptal</a>
+            <button type="submit" class="btn-accent">＋ Kaydet</button>
+        </div>
+    </form>
+</div>
+
+@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

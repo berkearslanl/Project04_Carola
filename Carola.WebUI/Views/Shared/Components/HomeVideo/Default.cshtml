@@ -1,0 +1,32 @@
+﻿@model List<ResultVideoDto>
+<style>
+    .vedio-section-outer {
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        z-index: 1;
+    }
+
+        .vedio-section-outer::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5); /* KARARTMA SEVİYESİ */
+            z-index: -1;
+        }
+</style>
+
+<section class="video-section">
+    @foreach (var item in Model)
+    {
+        <div class="container">
+            <div class="vedio-section-outer" style="background-image: url(https://i.hizliresim.com/pggyflt.png);">
+                <a href="@item.VideoUrl" class="lightbox-image"><i class="icon-14"></i></a>
+            </div>
+        </div>
+    }
+</section>
+<br /><br />

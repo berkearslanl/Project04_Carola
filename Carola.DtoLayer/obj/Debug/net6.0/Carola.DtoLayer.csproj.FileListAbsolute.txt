@@ -1,0 +1,12 @@
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DtoLayer\bin\Debug\net6.0\Carola.DtoLayer.deps.json
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DtoLayer\bin\Debug\net6.0\Carola.DtoLayer.dll
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DtoLayer\bin\Debug\net6.0\Carola.DtoLayer.pdb
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DtoLayer\obj\Debug\net6.0\Carola.DtoLayer.csproj.AssemblyReference.cache
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DtoLayer\obj\Debug\net6.0\Carola.DtoLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DtoLayer\obj\Debug\net6.0\Carola.DtoLayer.AssemblyInfoInputs.cache
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DtoLayer\obj\Debug\net6.0\Carola.DtoLayer.AssemblyInfo.cs
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DtoLayer\obj\Debug\net6.0\Carola.DtoLayer.csproj.CoreCompileInputs.cache
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DtoLayer\obj\Debug\net6.0\Carola.DtoLayer.dll
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DtoLayer\obj\Debug\net6.0\refint\Carola.DtoLayer.dll
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DtoLayer\obj\Debug\net6.0\Carola.DtoLayer.pdb
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DtoLayer\obj\Debug\net6.0\ref\Carola.DtoLayer.dll

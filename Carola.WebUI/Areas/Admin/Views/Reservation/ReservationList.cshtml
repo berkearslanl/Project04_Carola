@@ -1,0 +1,587 @@
+@model List<ResultReservationDto>
+@{
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    ViewData["Title"] = "Rezervasyon Yönetimi";
+    ViewData["Desc"]  = "Rezervasyon Listesi";
+
+    var total      = Model.Count;
+    var beklemede  = Model.Count(r => r.ReservationStatus == "Beklemede");
+    var onaylandi  = Model.Count(r => r.ReservationStatus == "Onaylandı");
+    var tamamlandi = Model.Count(r => r.ReservationStatus == "Tamamlandı");
+}
+
+<style>
+    :root {
+        --bg-dark:     #0d0f14;
+        --bg-dark2:    #13161e;
+        --bg-dark3:    #1a1e2a;
+        --accent:      #e8ff47;
+        --accent-dim:  rgba(232,255,71,.12);
+        --accent2:     #4f8dff;
+        --accent2-dim: rgba(79,141,255,.12);
+        --accent3:     #ff9f47;
+        --accent3-dim: rgba(255,159,71,.12);
+        --danger:      #ff5259;
+        --success:     #30e0a1;
+        --warning:     #ffb547;
+        --border:      rgba(255,255,255,.07);
+        --text:        #e2e8f0;
+        --text-muted:  #7a8499;
+        --radius:      12px;
+        --radius-lg:   18px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .rv-root {
+        padding: 28px;
+        font-family: 'DM Sans', 'Segoe UI', sans-serif;
+        color: var(--text);
+    }
+
+    /* Breadcrumb */
+    .rv-breadcrumb {
+        display: flex; align-items: center; gap: 6px;
+        font-size: 12px; color: var(--text-muted); margin-bottom: 6px;
+    }
+    .rv-breadcrumb span { color: var(--text); }
+
+    /* Page Header */
+    .rv-page-header {
+        display: flex; align-items: flex-end;
+        justify-content: space-between; gap: 16px;
+        margin-bottom: 24px; flex-wrap: wrap;
+    }
+    .rv-page-title {
+        font-family: 'Syne', Georgia, sans-serif;
+        font-size: 26px; font-weight: 700; line-height: 1;
+    }
+    .rv-page-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 5px; }
+
+    /* Buttons */
+    .btn-accent {
+        background: var(--accent); color: #0d0f14; border: none;
+        border-radius: 10px; padding: 9px 18px; font-size: 13px;
+        font-weight: 600; font-family: inherit; cursor: pointer;
+        display: inline-flex; align-items: center; gap: 7px;
+        text-decoration: none; transition: opacity .2s;
+    }
+    .btn-accent:hover { opacity: .85; color: #0d0f14; }
+
+    .btn-edit {
+        background: var(--accent2-dim); color: var(--accent2);
+        border: 1px solid rgba(79,141,255,.25); border-radius: 7px;
+        padding: 5px 11px; font-size: 11px; font-weight: 600;
+        font-family: inherit; cursor: pointer; display: inline-flex;
+        align-items: center; gap: 4px; text-decoration: none; transition: background .2s;
+    }
+    .btn-edit:hover { background: rgba(79,141,255,.2); color: var(--accent2); }
+
+    .btn-danger {
+        background: rgba(255,82,89,.1); color: var(--danger);
+        border: 1px solid rgba(255,82,89,.2); border-radius: 7px;
+        padding: 5px 11px; font-size: 11px; font-weight: 600;
+        font-family: inherit; cursor: pointer; display: inline-flex;
+        align-items: center; gap: 4px; text-decoration: none; transition: background .2s;
+    }
+    .btn-danger:hover { background: rgba(255,82,89,.18); color: var(--danger); }
+    .btn-success {
+    background: rgba(48,224,161,.1); color: var(--success);
+    border: 1px solid rgba(48,224,161,.2); border-radius: 7px;
+    padding: 5px 11px; font-size: 11px; font-weight: 600;
+    font-family: inherit; cursor: pointer; display: inline-flex;
+    align-items: center; gap: 4px; transition: background .2s;
+}
+.btn-success:hover { background: rgba(48,224,161,.18); }
+
+.btn-warning {
+    background: rgba(255,181,71,.1); color: var(--warning);
+    border: 1px solid rgba(255,181,71,.2); border-radius: 7px;
+    padding: 5px 11px; font-size: 11px; font-weight: 600;
+    font-family: inherit; cursor: pointer; display: inline-flex;
+    align-items: center; gap: 4px; transition: background .2s;
+}
+.btn-warning:hover { background: rgba(255,181,71,.18); }
+
+    /* Stats */
+    .rv-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px; margin-bottom: 22px;
+    }
+    @@media (max-width: 800px) { .rv-stats { grid-template-columns: repeat(2,1fr); } }
+    @@media (max-width: 480px) { .rv-stats { grid-template-columns: 1fr; } }
+
+    .rv-stat-card {
+        background: var(--bg-dark2); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 16px 18px;
+        display: flex; align-items: center; gap: 14px;
+    }
+    .rv-stat-icon {
+        width: 40px; height: 40px; border-radius: 10px;
+        display: grid; place-items: center; font-size: 18px; flex-shrink: 0;
+    }
+    .rv-stat-icon.yellow { background: var(--accent-dim);        color: var(--accent);  }
+    .rv-stat-icon.orange { background: var(--accent3-dim);       color: var(--accent3); }
+    .rv-stat-icon.green  { background: rgba(48,224,161,.1);      color: var(--success); }
+    .rv-stat-icon.blue   { background: var(--accent2-dim);       color: var(--accent2); }
+    .rv-stat-num   { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 700; line-height: 1; }
+    .rv-stat-label { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+    /* Toolbar */
+    .rv-toolbar {
+        display: flex; align-items: center; gap: 12px;
+        margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .rv-search-wrap { position: relative; flex: 1; min-width: 220px; max-width: 360px; }
+    .rv-search-wrap input {
+        width: 100%; background: var(--bg-dark2);
+        border: 1px solid var(--border); border-radius: 10px;
+        color: var(--text); padding: 9px 13px 9px 36px;
+        font-size: 13px; font-family: inherit; outline: none;
+        transition: border .2s, box-shadow .2s;
+    }
+    .rv-search-wrap input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+    .rv-search-wrap input::placeholder { color: var(--text-muted); }
+    .rv-search-icon {
+        position: absolute; left: 12px; top: 50%;
+        transform: translateY(-50%); font-size: 14px;
+        color: var(--text-muted); pointer-events: none;
+    }
+    .rv-sort-select {
+        background: var(--bg-dark2); border: 1px solid var(--border);
+        border-radius: 10px; color: var(--text); padding: 8px 12px;
+        font-size: 12px; font-family: inherit; outline: none; cursor: pointer;
+    }
+    .rv-sort-select:focus { border-color: var(--accent); }
+    .rv-result-info { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+    .rv-result-info strong { color: var(--text); }
+
+    /* Table Wrapper */
+    .rv-table-wrap {
+        background: var(--bg-dark2); border: 1px solid var(--border);
+        border-radius: var(--radius-lg); overflow: hidden;
+        animation: rvFadeUp .35s ease both;
+    }
+    @@keyframes rvFadeUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .rv-table-scroll { overflow-x: auto; }
+    .rv-table-scroll::-webkit-scrollbar { height: 4px; }
+    .rv-table-scroll::-webkit-scrollbar-track { background: var(--bg-dark3); }
+    .rv-table-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
+
+    /* Table */
+    .rv-table { width: 100%; border-collapse: collapse; min-width: 900px; }
+    .rv-table thead tr { background: var(--bg-dark3); border-bottom: 1px solid var(--border); }
+    .rv-table th {
+        padding: 13px 16px; font-size: 11px; font-weight: 600;
+        color: var(--text-muted); text-align: left;
+        text-transform: uppercase; letter-spacing: .05em; white-space: nowrap;
+    }
+    .rv-table tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    .rv-table tbody tr:last-child { border-bottom: none; }
+    .rv-table tbody tr:hover { background: rgba(255,255,255,.025); }
+    .rv-table td { padding: 13px 16px; font-size: 13px; color: var(--text); vertical-align: middle; }
+
+    /* Status Pills */
+    .rv-status {
+        display: inline-flex; align-items: center; gap: 5px;
+        border-radius: 6px; padding: 4px 10px;
+        font-size: 11px; font-weight: 600; white-space: nowrap;
+    }
+    .rv-status.beklemede  { background: rgba(255,181,71,.12);  color: var(--warning);  border: 1px solid rgba(255,181,71,.25); }
+    .rv-status.onaylandi  { background: rgba(48,224,161,.10);  color: var(--success);  border: 1px solid rgba(48,224,161,.25); }
+    .rv-status.iptal      { background: rgba(255,82,89,.10);   color: var(--danger);   border: 1px solid rgba(255,82,89,.25); }
+    .rv-status.tamamlandi { background: rgba(79,141,255,.10);  color: var(--accent2);  border: 1px solid rgba(79,141,255,.25); }
+
+    /* ID Badge */
+    .rv-id-badge {
+        font-family: monospace; font-size: 11px; color: var(--text-muted);
+        background: var(--bg-dark3); border: 1px solid var(--border);
+        border-radius: 5px; padding: 2px 7px; display: inline-block;
+    }
+
+    /* Date cell */
+    .rv-date-wrap { display: flex; flex-direction: column; gap: 2px; }
+    .rv-date { font-size: 12px; color: var(--text); white-space: nowrap; }
+    .rv-date-sub { font-size: 11px; color: var(--text-muted); }
+
+    /* Price */
+    .rv-price {
+        font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+        color: var(--accent);
+    }
+
+    /* Actions */
+    .rv-actions { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
+
+    /* Empty */
+    .rv-empty {
+        display: flex; flex-direction: column; align-items: center;
+        justify-content: center; padding: 60px 20px; gap: 12px; color: var(--text-muted);
+    }
+    .rv-empty-icon { font-size: 40px; opacity: .4; }
+    .rv-empty p    { font-size: 14px; }
+
+    /* Table Footer */
+    .rv-table-footer {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 12px 16px; border-top: 1px solid var(--border);
+        background: var(--bg-dark3); gap: 12px; flex-wrap: wrap;
+    }
+    .rv-footer-info { font-size: 12px; color: var(--text-muted); }
+    .rv-footer-info strong { color: var(--text); }
+
+    /* Pagination */
+    .rv-pagination { display: flex; align-items: center; gap: 4px; }
+    .rv-page-btn {
+        width: 32px; height: 32px; border-radius: 8px;
+        border: 1px solid var(--border); background: var(--bg-dark2);
+        color: var(--text-muted); cursor: pointer; display: grid;
+        place-items: center; font-size: 12px; font-weight: 600;
+        font-family: inherit; transition: all .2s;
+    }
+    .rv-page-btn:hover:not(:disabled) { background: var(--bg-dark3); color: var(--text); }
+    .rv-page-btn.active { background: var(--accent-dim); border-color: rgba(232,255,71,.3); color: var(--accent); }
+    .rv-page-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* Delete Modal */
+    .rv-modal-backdrop {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,.7); z-index: 200;
+        align-items: center; justify-content: center;
+        backdrop-filter: blur(4px);
+    }
+    .rv-modal-backdrop.open { display: flex; }
+    .rv-modal {
+        background: var(--bg-dark2); border: 1px solid var(--border);
+        border-radius: var(--radius-lg); padding: 32px 28px 28px;
+        width: 100%; max-width: 380px; text-align: center; position: relative;
+    }
+    .rv-modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; }
+    .rv-modal-icon  { font-size: 38px; margin-bottom: 10px; }
+    .rv-modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+    .rv-modal-msg   { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 24px; }
+    .rv-modal-actions { display: flex; gap: 10px; justify-content: center; }
+</style>
+<form id="rvTokenForm" style="display:none">@Html.AntiForgeryToken()</form>
+<div class="rv-root">
+
+    <div class="rv-breadcrumb">
+        Rezervasyon Yönetimi <span>›</span> <span>Rezervasyon Listesi</span>
+    </div>
+
+    <div class="rv-page-header">
+        <div>
+            <h1 class="rv-page-title">Rezervasyon Yönetimi</h1>
+            <p class="rv-page-subtitle">Tüm araç rezervasyonlarını görüntüleyin ve yönetin.</p>
+        </div>
+        <a href="/Admin/Reservation/CreateReservation/" class="btn-accent">
+            ＋ Yeni Rezervasyon Ekle
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="rv-stats">
+        <div class="rv-stat-card">
+            <div class="rv-stat-icon yellow">📋</div>
+            <div>
+                <div class="rv-stat-num">@total</div>
+                <div class="rv-stat-label">Toplam Rezervasyon</div>
+            </div>
+        </div>
+        <div class="rv-stat-card">
+            <div class="rv-stat-icon orange">⏳</div>
+            <div>
+                <div class="rv-stat-num">@beklemede</div>
+                <div class="rv-stat-label">Beklemede</div>
+            </div>
+        </div>
+        <div class="rv-stat-card">
+            <div class="rv-stat-icon green">✅</div>
+            <div>
+                <div class="rv-stat-num">@onaylandi</div>
+                <div class="rv-stat-label">Onaylandı</div>
+            </div>
+        </div>
+        <div class="rv-stat-card">
+            <div class="rv-stat-icon blue">🏁</div>
+            <div>
+                <div class="rv-stat-num">@tamamlandi</div>
+                <div class="rv-stat-label">Tamamlandı</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="rv-toolbar">
+        <div class="rv-search-wrap">
+            <span class="rv-search-icon">🔍</span>
+            <input type="text" id="rvSearch" placeholder="Araç ID, Müşteri ID, durum ara..." oninput="rvRender()" />
+        </div>
+        <select class="rv-sort-select" id="rvSort" onchange="rvRender()">
+            <option value="default">Sıralama</option>
+            <option value="id_asc">ID ↑</option>
+            <option value="id_desc">ID ↓</option>
+            <option value="price_asc">Fiyat ↑</option>
+            <option value="price_desc">Fiyat ↓</option>
+            <option value="pickup_asc">Alış Tarihi ↑</option>
+        </select>
+        <select class="rv-sort-select" id="rvFilter" onchange="rvRender()">
+            <option value="all">Tüm Durumlar</option>
+            <option value="Beklemede">⏳ Beklemede</option>
+            <option value="Onaylandı">✅ Onaylandı</option>
+            <option value="İptal">❌ İptal</option>
+            <option value="Tamamlandı">🏁 Tamamlandı</option>
+        </select>
+        <div class="rv-result-info" id="rvResultInfo"></div>
+    </div>
+
+    <!-- Table -->
+    <div class="rv-table-wrap">
+        <div class="rv-table-scroll">
+            <table class="rv-table">
+                <thead>
+                    <tr>
+                        <th>#ID</th>
+                        <th>Araç / Müşteri</th>
+                        <th>Alış Tarihi</th>
+                        <th>İade Tarihi</th>
+                        <th>Lokasyon</th>
+                        <th>Toplam Fiyat</th>
+                        <th>Durum</th>
+                        <th style="text-align:right;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="rvTableBody"></tbody>
+            </table>
+        </div>
+        <div class="rv-table-footer">
+            <div class="rv-footer-info" id="rvFooterInfo"></div>
+            <div class="rv-pagination" id="rvPagination"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Delete Modal -->
+<div class="rv-modal-backdrop" id="rvConfirmModal">
+    <div class="rv-modal">
+        <button class="rv-modal-close" onclick="rvCloseModal()">✕</button>
+        <div class="rv-modal-icon">🗑️</div>
+        <div class="rv-modal-title">Rezervasyonu Sil</div>
+        <p class="rv-modal-msg" id="rvConfirmMsg"></p>
+        <div class="rv-modal-actions">
+            <button class="btn-accent"
+                    onclick="rvCloseModal()"
+                    style="background:var(--bg-dark3);color:var(--text);border:1px solid var(--border);">
+                İptal
+            </button>
+            <form id="rvDeleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-danger">🗑️ Evet, Sil</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var RV_DATA = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(r => new {
+        r.ReservationId,
+        r.CarId,
+        r.CustomerId,
+        r.PickupLocationId,
+        r.ReturnLocationId,
+        r.TotalPrice,
+        r.ReservationStatus,
+        r.Description,
+        PickupDate  = r.PickupDate.ToString("yyyy-MM-dd"),
+        ReturnDate  = r.ReturnDate.ToString("yyyy-MM-dd")
+    })));
+
+    var RV_TOKEN = document.querySelector('#rvTokenForm input[name="__RequestVerificationToken"]').value;
+
+function rvStatusForm(reservationId, status, label) {
+    return '<form method="post" action="/Admin/Reservation/UpdateStatus" style="display:inline">' +
+        '<input type="hidden" name="__RequestVerificationToken" value="' + RV_TOKEN + '" />' +
+        '<input type="hidden" name="reservationId" value="' + reservationId + '" />' +
+        '<input type="hidden" name="status" value="' + status + '" />' +
+        '<button type="submit" class="btn-' + (status === 'İptal' ? 'danger' : status === 'Onaylandı' ? 'success' : 'warning') + '">' + label + '</button>' +
+    '</form>';
+}
+
+function rvStatusButtons(r) {
+    var btns = '';
+    if (r.ReservationStatus === 'Beklemede') {
+        btns += rvStatusForm(r.ReservationId, 'Onaylandı',  '✅ Onayla');
+        btns += rvStatusForm(r.ReservationId, 'İptal',      '❌ İptal');
+    } else if (r.ReservationStatus === 'Onaylandı') {
+        btns += rvStatusForm(r.ReservationId, 'Tamamlandı', '🏁 Tamamla');
+        btns += rvStatusForm(r.ReservationId, 'İptal',      '❌ İptal');
+    }
+    return btns;
+}
+
+
+    var rvPage    = 1;
+    var rvPerPage = 10;
+
+    function rvStatusClass(s) {
+        if (s === 'Beklemede')  return 'beklemede';
+        if (s === 'Onaylandı')  return 'onaylandi';
+        if (s === 'İptal')      return 'iptal';
+        if (s === 'Tamamlandı') return 'tamamlandi';
+        return '';
+    }
+
+    function rvStatusIcon(s) {
+        if (s === 'Beklemede')  return '⏳';
+        if (s === 'Onaylandı')  return '✅';
+        if (s === 'İptal')      return '❌';
+        if (s === 'Tamamlandı') return '🏁';
+        return '';
+    }
+
+    function rvFmtDate(d) {
+        var dt = new Date(d);
+        return dt.toLocaleDateString('tr-TR', { day:'2-digit', month:'short', year:'numeric' });
+    }
+
+    function rvEsc(str) {
+        if (!str && str !== 0) return '';
+        return String(str)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function rvGetFiltered() {
+        var q      = document.getElementById('rvSearch').value.toLowerCase();
+        var sort   = document.getElementById('rvSort').value;
+        var filter = document.getElementById('rvFilter').value;
+
+        var items = RV_DATA.filter(function(r) {
+            var search = (r.ReservationId + ' ' + r.CarId + ' ' + r.CustomerId + ' ' + r.ReservationStatus + ' ' + (r.Description || '')).toLowerCase();
+            var matchQ = search.indexOf(q) !== -1;
+            var matchF = filter === 'all' || r.ReservationStatus === filter;
+            return matchQ && matchF;
+        });
+
+        if (sort === 'id_asc')       items.sort(function(a,b){ return a.ReservationId - b.ReservationId; });
+        if (sort === 'id_desc')      items.sort(function(a,b){ return b.ReservationId - a.ReservationId; });
+        if (sort === 'price_asc')    items.sort(function(a,b){ return a.TotalPrice - b.TotalPrice; });
+        if (sort === 'price_desc')   items.sort(function(a,b){ return b.TotalPrice - a.TotalPrice; });
+        if (sort === 'pickup_asc')   items.sort(function(a,b){ return new Date(a.PickupDate) - new Date(b.PickupDate); });
+
+        return items;
+    }
+
+    function rvRender() {
+        var items   = rvGetFiltered();
+        var total   = items.length;
+        var pages   = Math.max(1, Math.ceil(total / rvPerPage));
+        if (rvPage > pages) rvPage = pages;
+        var start   = (rvPage - 1) * rvPerPage;
+        var pageItems = items.slice(start, start + rvPerPage);
+
+        document.getElementById('rvResultInfo').innerHTML =
+            '<strong>' + total + '</strong> rezervasyon listeleniyor';
+
+        var tbody = document.getElementById('rvTableBody');
+
+        if (items.length === 0) {
+            tbody.innerHTML =
+                '<tr><td colspan="8">' +
+                    '<div class="rv-empty">' +
+                        '<div class="rv-empty-icon">📋</div>' +
+                        '<p>Aramanızla eşleşen rezervasyon bulunamadı.</p>' +
+                    '</div>' +
+                '</td></tr>';
+        } else {
+            tbody.innerHTML = pageItems.map(function(r, i) {
+                var sc = rvStatusClass(r.ReservationStatus);
+                var si = rvStatusIcon(r.ReservationStatus);
+                return '<tr style="animation:rvFadeUp .25s ease ' + (i * 0.03) + 's both">' +
+                    '<td><span class="rv-id-badge">#' + r.ReservationId + '</span></td>' +
+                    '<td>' +
+                        '<div style="display:flex;flex-direction:column;gap:2px;">' +
+                            '<span style="font-size:12px;color:var(--text-muted);">🚗 Araç ID: <strong style="color:var(--text)">' + r.CarId + '</strong></span>' +
+                            '<span style="font-size:12px;color:var(--text-muted);">👤 Müşteri ID: <strong style="color:var(--text)">' + r.CustomerId + '</strong></span>' +
+                        '</div>' +
+                    '</td>' +
+                    '<td>' +
+                        '<div class="rv-date-wrap">' +
+                            '<span class="rv-date">📅 ' + rvFmtDate(r.PickupDate) + '</span>' +
+                            '<span class="rv-date-sub">Alış Lokasyon #' + r.PickupLocationId + '</span>' +
+                        '</div>' +
+                    '</td>' +
+                    '<td>' +
+                        '<div class="rv-date-wrap">' +
+                            '<span class="rv-date">📅 ' + rvFmtDate(r.ReturnDate) + '</span>' +
+                            '<span class="rv-date-sub">İade Lokasyon #' + r.ReturnLocationId + '</span>' +
+                        '</div>' +
+                    '</td>' +
+                    '<td>' +
+                        '<div style="font-size:11px;color:var(--text-muted);">' +
+                            '<div>Alış: #' + r.PickupLocationId + '</div>' +
+                            '<div>İade: #' + r.ReturnLocationId + '</div>' +
+                        '</div>' +
+                    '</td>' +
+                    '<td><span class="rv-price">₺' + Number(r.TotalPrice).toLocaleString('tr-TR', {minimumFractionDigits:2}) + '</span></td>' +
+                    '<td><span class="rv-status ' + sc + '">' + si + ' ' + rvEsc(r.ReservationStatus) + '</span></td>' +
+                    '<td style="text-align:right">' +
+                        '<div class="rv-actions" style="justify-content:flex-end">' +
+                            rvStatusButtons(r) +
+                            '<a href="/Admin/Reservation/UpdateReservation/' + r.ReservationId + '" class="btn-edit">✏️ Düzenle</a>' +
+                            '<button class="btn-danger" onclick="rvConfirmDelete(' + r.ReservationId + ')">🗑️ Sil</button>' +
+                        '</div>' +
+                    '</td>' +
+                '</tr>';
+            }).join('');
+        }
+
+        document.getElementById('rvFooterInfo').innerHTML =
+            '<strong>' + (start + 1) + '–' + Math.min(start + rvPerPage, total) + '</strong> / ' + total + ' kayıt gösteriliyor';
+
+        var pag = document.getElementById('rvPagination');
+        var html = '';
+        html += '<button class="rv-page-btn" onclick="rvGoPage(' + (rvPage-1) + ')" ' + (rvPage===1?'disabled':'') + '>‹</button>';
+        var from = Math.max(1, rvPage - 2);
+        var to   = Math.min(pages, rvPage + 2);
+        if (from > 1) html += '<button class="rv-page-btn" onclick="rvGoPage(1)">1</button>' + (from > 2 ? '<span style="color:var(--text-muted);padding:0 4px;font-size:12px">…</span>' : '');
+        for (var p = from; p <= to; p++) {
+            html += '<button class="rv-page-btn' + (p===rvPage?' active':'') + '" onclick="rvGoPage(' + p + ')">' + p + '</button>';
+        }
+        if (to < pages) html += (to < pages-1 ? '<span style="color:var(--text-muted);padding:0 4px;font-size:12px">…</span>' : '') + '<button class="rv-page-btn" onclick="rvGoPage(' + pages + ')">' + pages + '</button>';
+        html += '<button class="rv-page-btn" onclick="rvGoPage(' + (rvPage+1) + ')" ' + (rvPage===pages?'disabled':'') + '>›</button>';
+        pag.innerHTML = html;
+    }
+
+    function rvGoPage(p) {
+        var items = rvGetFiltered();
+        var pages = Math.max(1, Math.ceil(items.length / rvPerPage));
+        if (p < 1 || p > pages) return;
+        rvPage = p;
+        rvRender();
+        document.querySelector('.rv-table-wrap').scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+
+    function rvConfirmDelete(id) {
+        document.getElementById('rvConfirmMsg').innerHTML =
+            '<strong>#' + id + '</strong> numaralı rezervasyonu silmek istediğinizden emin misiniz?<br>Bu işlem geri alınamaz.';
+        document.getElementById('rvDeleteForm').action = '/Admin/Reservation/DeleteReservation/' + id;
+        document.getElementById('rvConfirmModal').classList.add('open');
+    }
+
+    function rvCloseModal() {
+        document.getElementById('rvConfirmModal').classList.remove('open');
+    }
+
+    document.getElementById('rvConfirmModal').addEventListener('click', function(e) {
+        if (e.target === this) rvCloseModal();
+    });
+
+    rvRender();
+</script>

@@ -1,0 +1,298 @@
+@model CarListViewModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/_MainLayout/Index.cshtml";
+
+    // Paging linklerinde seatCounts'u tekrar tekrar yazmamak için yardımcı string
+    var seatQuery = string.Join("", Model.SeatCounts.Select(s => $"&seatCounts={s}"));
+
+    string PageUrl(int p) =>
+        $"?page={p}" +
+        $"&carId={Model.CarId}" +
+        $"&pickupLocationId={Model.PickupLocationId}" +
+        $"&returnLocationId={Model.ReturnLocationId}" +
+        $"&pickupDate={Model.PickupDate}" +
+        $"&returnDate={Model.ReturnDate}" +
+        $"&categoryId={Model.CategoryId}" +
+        $"&fuelType={Model.FuelType}" +
+        $"&transmissionType={Model.TransmissionType}" +
+        $"&minPrice={Model.MinPrice}" +
+        $"&maxPrice={Model.MaxPrice}" +
+        $"&searchTerm={Model.SearchTerm}" +
+        seatQuery;
+}
+<style>
+    .breadcrumb-section {
+        position: relative;
+        background-image: url(https://i.hizliresim.com/epybnf5.png);
+        background-size: cover;
+        background-position: center;
+    }
+
+        .breadcrumb-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+    .banner-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+        .banner-content h1 {
+            color: #fff;
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+    .single-popular-car-image {
+        width: 100%;
+        height: 220px;
+        overflow: hidden;
+        border-radius: 10px;
+    }
+
+        .single-popular-car-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+    .pagination {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+        .pagination .page-btn {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            background-color: #fff;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+            .pagination .page-btn:hover {
+                background-color: #f5f5f5;
+                transform: translateY(-1px);
+            }
+
+            .pagination .page-btn.active {
+                background-color: #0d6efd;
+                color: #fff;
+                border-color: #0d6efd;
+                pointer-events: none;
+            }
+</style>
+
+<section class="breadcrumb-section" style="background-image: url(https://i.hizliresim.com/epybnf5.png);">
+    <div class="container">
+        <div class="banner-content">
+            <h1>Araç Listesi</h1>
+        </div>
+    </div>
+</section>
+
+<section class="car-listing-section pt_120 pb_90">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                <div class="product-sidebar mr_30">
+                    <form method="GET" action="/CarList/Index/">
+                        <input type="hidden" name="pickupLocationId" value="@Model.PickupLocationId" />
+                        <input type="hidden" name="returnLocationId" value="@Model.ReturnLocationId" />
+                        <input type="hidden" name="pickupDate" value="@Model.PickupDate" />
+                        <input type="hidden" name="returnDate" value="@Model.ReturnDate" />
+
+                        <!-- Araç Adı Arama -->
+                        <div class="sidebar-search-widget">
+                            <h3 class="sidebar-widget-title">Araç Ara</h3>
+                            <div class="sidebar-search-box">
+                                <input type="text" name="searchTerm"
+                                       value="@Model.SearchTerm"
+                                       placeholder="Marka veya model...">
+                                <button type="submit"><i class="icon-18"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Kategori / Yakıt / Vites -->
+                        <div class="sidebar-select-car-widget">
+                            <h3 class="sidebar-widget-title">Araç Filtrele</h3>
+                            <div class="filter-box">
+
+                                <div class="custom-select">
+                                    <select name="categoryId">
+                                        <option value="">Tüm Kategoriler</option>
+                                        @foreach (var cat in Model.Categories)
+                                        {
+                                            <option value="@cat.CategoryId"
+                                                    selected="@(Model.CategoryId == cat.CategoryId)">
+                                                @cat.CategoryName
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="custom-select">
+                                    <select name="fuelType">
+                                        <option value="">Tüm Yakıt Tipleri</option>
+                                        <option value="Benzin" selected="@(Model.FuelType == "Benzin")">Benzin</option>
+                                        <option value="Dizel" selected="@(Model.FuelType == "Dizel")">Dizel</option>
+                                        <option value="Elektrik" selected="@(Model.FuelType == "Elektrik")">Elektrik</option>
+                                        <option value="Hibrit" selected="@(Model.FuelType == "Hibrit")">Hibrit</option>
+                                    </select>
+                                </div>
+
+                                <div class="custom-select">
+                                    <select name="transmissionType">
+                                        <option value="">Tüm Vites Tipleri</option>
+                                        <option value="Manuel" selected="@(Model.TransmissionType == "Manuel")">Manuel</option>
+                                        <option value="Otomatik" selected="@(Model.TransmissionType == "Otomatik")">Otomatik</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Fiyat Slider -->
+                        <div class="sidebar-filter-widget">
+                            <h3 class="sidebar-widget-title">Fiyat Aralığı (₺/gün)</h3>
+                            <div class="price-range-slider">
+                                <div id="slider-range" class="range-bar"></div>
+                                <p class="range-value">
+                                    <span>Fiyat:</span>
+                                    <input type="text" id="amount" readonly>
+                                </p>
+                                <input type="hidden" name="minPrice" id="minPrice" value="@Model.MinPrice" />
+                                <input type="hidden" name="maxPrice" id="maxPrice" value="@Model.MaxPrice" />
+                            </div>
+                        </div>
+
+                        <!-- Koltuk Sayısı -->
+                        <div class="sidebar-capacity-widget">
+                            <h3 class="sidebar-widget-title">Koltuk Sayısı</h3>
+                            <ul class="capacity-list">
+                                @foreach (var seat in new[] { 2, 4, 5, 7, 9 })
+                                {
+                                    <li>
+                                        <div class="check-box">
+                                            <input class="check" type="checkbox"
+                                                   name="seatCounts" value="@seat"
+                                                   id="seat-@seat"
+                                                   checked="@(Model.SeatCounts.Contains(seat))">
+                                            <label for="seat-@seat">@seat Kişilik</label>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                        <!-- Filtrele / Temizle Butonları -->
+                        <div class="btn-box" style="margin-top: 20px;">
+                            <a href="/CarList/Index/" class="clear-btn">Temizle</a>
+                            <button type="submit" class="filter-btn btn-style-four">Filtrele</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <!-- Araç Listesi -->
+            <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12">
+                <div class="row">
+                    @if (!Model.Cars.Any())
+                    {
+                        <div class="col-12 text-center py-5">
+                            <i class="fas fa-car-side fa-3x mb-3" style="color:#ccc;"></i>
+                            <h4 style="color:#555;">Araç Bulunamadı</h4>
+                            <p style="color:#999;">Seçtiğiniz kriterlere uygun araç mevcut değil. Filtreleri değiştirmeyi deneyin.</p>
+                            <a href="/CarList/Index/" class="btn-style-three mt-3" style="display:inline-block;">Tüm Araçları Gör</a>
+                        </div>
+                    }
+                    @foreach (var item in Model.Cars)
+                    {
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                            <div class="single-popular-car-block style-three">
+                                <div class="single-popular-car-image">
+                                    <img src="@item.ImageUrl" alt="">
+                                    <div class="single-popular-car-rent-per-day"><span>@item.DailyPrice ₺</span>/ Günlük</div>
+                                </div>
+                                <div class="single-popular-car-content">
+                                    @if (item.IsAvailable)
+                                    {
+                                        <div class="single-popular-car-rating text-success">Müsait</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="single-popular-car-rating text-danger">Kirada</div>
+                                    }
+                                    <h5 class="single-popular-car-title">@item.Brand @item.Model</h5>
+                                    <ul class="single-popular-car-info">
+                                        <li><i class="icon-6"></i>Yakıt: @item.FuelType</li>
+                                        <li><i class="icon-7"></i>Bagaj: @item.LuggageCapacity Valiz</li>
+                                        <li><i class="icon-8"></i>Yolcu Sayısı: @item.SeatCount</li>
+                                    </ul>
+                                    <div class="single-popular-car-book-btn">
+                                        @if (Model.CurrentlyRentedCarIds.Contains(item.CarId) || !item.IsAvailable)
+                                        {
+                                            <a class="btn-style-three" style="opacity:0.5; pointer-events:none; cursor:not-allowed;">
+                                                Şu An Kirada
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="/Booking/Index?carId=@item.CarId&pickupDate=...&returnDate=...&pickupLocationId=...&returnLocationId=...
+        " class="btn-style-three">Hemen Kirala</a>
+                                        }
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Paging -->
+                    <div class="d-flex justify-content-center mt-4">
+                        <div class="pagination">
+
+                            @if (Model.CurrentPage > 1)
+                            {
+                                <a href="@PageUrl(Model.CurrentPage - 1)" class="page-btn">Önceki</a>
+                            }
+
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <a href="@PageUrl(i)"
+                                   class="page-btn @(i == Model.CurrentPage ? "active" : "")">
+                                    @i
+                                </a>
+                            }
+
+                            @if (Model.CurrentPage < Model.TotalPages)
+                            {
+                                <a href="@PageUrl(Model.CurrentPage + 1)" class="page-btn">Sonraki</a>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

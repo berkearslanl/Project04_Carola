@@ -1,0 +1,161 @@
+@model List<ResultWhyUsDto>
+@using Carola.DtoLayer.Dtos.WhyUsDtos
+@{
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    var totalCount = Model.Count();
+}
+
+<style>
+    :root { --bg-dark:#0d0f14; --bg-dark2:#13161e; --bg-dark3:#1a1e2a; --accent:#e8ff47; --accent-dim:rgba(232,255,71,.12); --accent2:#4f8dff; --accent2-dim:rgba(79,141,255,.12); --danger:#ff5259; --success:#30e0a1; --border:rgba(255,255,255,.07); --text:#e2e8f0; --text-muted:#7a8499; --radius:12px; --radius-lg:18px; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    .wu-root { padding:28px; font-family:'DM Sans','Segoe UI',sans-serif; color:var(--text); }
+    .wu-breadcrumb { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+    .wu-breadcrumb span { color:var(--text); }
+    .wu-page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
+    .wu-page-title { font-family:'Syne',Georgia,sans-serif; font-size:26px; font-weight:700; color:var(--text); line-height:1; }
+    .wu-page-subtitle { font-size:13px; color:var(--text-muted); margin-top:5px; }
+    .btn-accent { background:var(--accent); color:#0d0f14; border:none; border-radius:10px; padding:9px 18px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:7px; text-decoration:none; transition:opacity .2s; }
+    .btn-accent:hover { opacity:.85; color:#0d0f14; }
+    .btn-edit { background:var(--accent2-dim); color:var(--accent2); border:1px solid rgba(79,141,255,.25); border-radius:8px; padding:6px 13px; font-size:12px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:5px; text-decoration:none; }
+    .btn-edit:hover { background:rgba(79,141,255,.2); color:var(--accent2); }
+    .btn-danger { background:rgba(255,82,89,.1); color:var(--danger); border:1px solid rgba(255,82,89,.2); border-radius:8px; padding:6px 13px; font-size:12px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:5px; text-decoration:none; }
+    .btn-danger:hover { background:rgba(255,82,89,.18); color:var(--danger); }
+    .wu-stat-card { background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; display:inline-flex; align-items:center; gap:14px; margin-bottom:22px; }
+    .wu-stat-icon { width:40px; height:40px; border-radius:10px; background:var(--accent-dim); color:var(--accent); display:grid; place-items:center; font-size:18px; }
+    .wu-stat-num { font-family:'Syne',sans-serif; font-size:24px; font-weight:700; }
+    .wu-stat-label { font-size:12px; color:var(--text-muted); }
+    .wu-toolbar { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+    .wu-search-wrap { position:relative; max-width:340px; flex:1; min-width:200px; }
+    .wu-search-wrap input { width:100%; background:var(--bg-dark2); border:1px solid var(--border); border-radius:10px; color:var(--text); padding:9px 13px 9px 36px; font-size:13px; font-family:inherit; outline:none; }
+    .wu-search-wrap input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-dim); }
+    .wu-search-wrap input::placeholder { color:var(--text-muted); }
+    .wu-search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:14px; color:var(--text-muted); }
+    .wu-result-info { font-size:12px; color:var(--text-muted); margin-bottom:14px; }
+    .wu-result-info strong { color:var(--text); }
+    .wu-table { width:100%; border-collapse:collapse; background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+    .wu-table th { background:var(--bg-dark3); padding:12px 16px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.6px; color:var(--text-muted); text-align:left; border-bottom:1px solid var(--border); }
+    .wu-table td { padding:14px 16px; font-size:13px; color:var(--text); border-bottom:1px solid var(--border); vertical-align:middle; }
+    .wu-table tr:last-child td { border-bottom:none; }
+    .wu-table tr:hover td { background:rgba(255,255,255,.02); }
+    .wu-id-badge { display:inline-block; background:var(--accent-dim); border:1px solid rgba(232,255,71,.2); color:var(--accent); border-radius:6px; padding:2px 8px; font-size:11px; font-weight:600; }
+    .wu-icon-cell { font-size:22px; }
+    .wu-title-cell { font-weight:600; }
+    .wu-desc-cell { color:var(--text-muted); font-size:12px; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .wu-actions { display:flex; gap:8px; }
+    .wu-modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+    .wu-modal-backdrop.open { display:flex; }
+    .wu-modal { background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px 28px 28px; width:100%; max-width:380px; text-align:center; position:relative; }
+    .wu-modal-close { position:absolute; top:14px; right:16px; background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer; }
+    .wu-modal-icon { font-size:38px; margin-bottom:10px; }
+    .wu-modal-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; margin-bottom:10px; }
+    .wu-modal-msg { font-size:13px; color:var(--text-muted); line-height:1.65; margin-bottom:24px; }
+    .wu-modal-actions { display:flex; gap:10px; justify-content:center; }
+</style>
+
+<div class="wu-root">
+    <div class="wu-breadcrumb">İçerik Yönetimi <span>›</span> <span>Neden Biz Listesi</span></div>
+
+    <div class="wu-page-header">
+        <div>
+            <h1 class="wu-page-title">Neden Biz Yönetimi</h1>
+            <p class="wu-page-subtitle">Ana sayfadaki "Neden Biz" öğelerini yönetin.</p>
+        </div>
+        <a href="/Admin/WhyUs/CreateWhyUs/" class="btn-accent">＋ Yeni Özellik Ekle</a>
+    </div>
+
+    <div class="wu-stat-card">
+        <div class="wu-stat-icon">✨</div>
+        <div>
+            <div class="wu-stat-num">@totalCount</div>
+            <div class="wu-stat-label">Toplam Özellik</div>
+        </div>
+    </div>
+
+    <div class="wu-toolbar">
+        <div class="wu-search-wrap">
+            <span class="wu-search-icon">🔍</span>
+            <input type="text" id="wuSearch" placeholder="Başlık ara..." oninput="wuRender()" />
+        </div>
+    </div>
+
+    <div class="wu-result-info" id="wuResultInfo"></div>
+
+    <table class="wu-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>İkon</th>
+                <th>Başlık</th>
+                <th>Açıklama</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody id="wuBody"></tbody>
+    </table>
+</div>
+
+<div class="wu-modal-backdrop" id="wuConfirmModal">
+    <div class="wu-modal">
+        <button class="wu-modal-close" onclick="wuCloseModal()">✕</button>
+        <div class="wu-modal-icon">🗑️</div>
+        <div class="wu-modal-title">Özelliği Sil</div>
+        <p class="wu-modal-msg" id="wuConfirmMsg"></p>
+        <div class="wu-modal-actions">
+            <button class="btn-accent" onclick="wuCloseModal()" style="background:var(--bg-dark3);color:var(--text);border:1px solid var(--border);">İptal</button>
+            <form id="wuDeleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-danger">🗑️ Evet, Sil</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const WU_DATA = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(w => new {
+        w.WhyUsId, w.IconUrl, w.Title, w.Description
+    })));
+
+    function wuGetFiltered() {
+        const q = document.getElementById('wuSearch').value.toLowerCase();
+        return WU_DATA.filter(w => w.Title.toLowerCase().includes(q));
+    }
+
+    function wuRender() {
+        const items = wuGetFiltered();
+        document.getElementById('wuResultInfo').innerHTML = `<strong>${items.length}</strong> özellik listeleniyor`;
+        const tbody = document.getElementById('wuBody');
+        if (items.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">Sonuç bulunamadı.</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = items.map(w => `
+            <tr>
+                <td><span class="wu-id-badge">#${w.WhyUsId}</span></td>
+                <td class="wu-icon-cell">${wuEsc(w.IconUrl)}</td>
+                <td class="wu-title-cell">${wuEsc(w.Title)}</td>
+                <td class="wu-desc-cell" title="${wuEsc(w.Description)}">${wuEsc(w.Description)}</td>
+                <td>
+                    <div class="wu-actions">
+                        <a href="/Admin/WhyUs/UpdateWhyUs/${w.WhyUsId}" class="btn-edit">✏️ Düzenle</a>
+                        <button class="btn-danger" onclick="wuConfirmDelete(${w.WhyUsId},'${wuEsc(w.Title)}')">🗑️ Sil</button>
+                    </div>
+                </td>
+            </tr>`).join('');
+    }
+
+    function wuConfirmDelete(id, title) {
+        document.getElementById('wuConfirmMsg').innerHTML = `<strong>${wuEsc(title)}</strong> özelliğini silmek istediğinizden emin misiniz?`;
+        document.getElementById('wuDeleteForm').action = `/Admin/WhyUs/DeleteWhyUs/${id}`;
+        document.getElementById('wuConfirmModal').classList.add('open');
+    }
+
+    function wuCloseModal() { document.getElementById('wuConfirmModal').classList.remove('open'); }
+    document.getElementById('wuConfirmModal').addEventListener('click', function(e) { if (e.target === this) wuCloseModal(); });
+
+    function wuEsc(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+    }
+
+    wuRender();
+</script>

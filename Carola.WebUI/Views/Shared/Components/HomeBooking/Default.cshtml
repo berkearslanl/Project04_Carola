@@ -1,0 +1,124 @@
+@model List<ResultLocationDto>
+<section class="booking-section home-three">
+    <div class="container">
+        <div class="filter-wrapper">
+            <div class="filter-group">
+                <form method="GET" action="/CarList/Index">
+
+                    @* Lokasyon ID'leri hidden olarak taşınır *@
+                    <input type="hidden" name="pickupLocationId" id="pickupLocationId"
+                           value="@Model.FirstOrDefault()?.LocationId" />
+                    <input type="hidden" name="returnLocationId" id="returnLocationId"
+                           value="@Model.FirstOrDefault()?.LocationId" />
+
+                    <div class="filter-area">
+                        <div class="row">
+
+                            @* Alış Yeri *@
+                            <div class="col-xl-3 col-md-6 col-sm-12 colmun">
+                                <div class="single-search-box">
+                                    <div class="icon"><i class="icon-24"></i></div>
+                                    <div class="searchbox-input" data-hidden="pickupLocationId">
+                                        <label>Alış Yeri</label>
+                                        <div class="custom-select-dropdown">
+                                            <div class="select-input">
+                                                <input type="text" readonly value="@Model.FirstOrDefault()?.LocationName" />
+                                                <i class="fas fa-angle-down"></i>
+                                            </div>
+                                            <div class="custom-select-wrap">
+                                                <div class="custom-select-search-area">
+                                                    <i class="fas fa-magnifying-glass"></i>
+                                                    <input type="text" placeholder="Lokasyon ara..." />
+                                                </div>
+                                                <ul class="option-list">
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        <li data-id="@item.LocationId">
+                                                            <div class="destination">
+                                                                <h6>@item.LocationName</h6>
+                                                                <p>@item.City</p>
+                                                            </div>
+                                                            <div class="tour"><span>📍</span></div>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @* Teslim Yeri *@
+                            <div class="col-xl-3 col-md-6 col-sm-12 colmun">
+                                <div class="single-search-box">
+                                    <div class="icon"><i class="icon-24"></i></div>
+                                    <div class="searchbox-input" data-hidden="returnLocationId">
+                                        <label>Teslim Yeri</label>
+                                        <div class="custom-select-dropdown">
+                                            <div class="select-input">
+                                                <input type="text" readonly value="@Model.FirstOrDefault()?.LocationName" />
+                                                <i class="fas fa-angle-down"></i>
+                                            </div>
+                                            <div class="custom-select-wrap">
+                                                <div class="custom-select-search-area">
+                                                    <i class="fas fa-magnifying-glass"></i>
+                                                    <input type="text" placeholder="Lokasyon ara..." />
+                                                </div>
+                                                <ul class="option-list">
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        <li data-id="@item.LocationId">
+                                                            <div class="destination">
+                                                                <h6>@item.LocationName</h6>
+                                                                <p>@item.City</p>
+                                                            </div>
+                                                            <div class="tour"><span>📍</span></div>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @* Alış Tarihi *@
+                            <div class="col-xl-3 col-md-6 col-sm-12 colmun">
+                                <div class="single-search-box">
+                                    <div class="icon"><i class="icon-25"></i></div>
+                                    <div class="searchbox-input">
+                                        <label>Alış Tarihi</label>
+                                        <div class="custom-select-dropdown">
+                                            <div class="select-input">
+                                                <input type="text" name="pickupDate" readonly value="" placeholder="Tarih seçin" />
+                                                <i class="fas fa-angle-down"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @* Teslim Tarihi *@
+                            <div class="col-xl-3 col-md-6 col-sm-12 colmun">
+                                <div class="single-search-box">
+                                    <div class="icon"><i class="icon-26"></i></div>
+                                    <div class="searchbox-input">
+                                        <label>Teslim Tarihi</label>
+                                        <div class="custom-select-dropdown">
+                                            <div class="select-input">
+                                                <input type="text" name="returnDate" readonly value="" placeholder="Tarih seçin" />
+                                                <i class="fas fa-angle-down"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <button type="submit">Araç Ara</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

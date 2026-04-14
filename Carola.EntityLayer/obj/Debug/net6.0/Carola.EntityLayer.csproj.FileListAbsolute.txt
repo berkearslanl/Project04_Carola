@@ -1,0 +1,14 @@
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\bin\Debug\net6.0\Carola.EntityLayer.deps.json
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\bin\Debug\net6.0\Carola.EntityLayer.runtimeconfig.json
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\bin\Debug\net6.0\Carola.EntityLayer.dll
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\bin\Debug\net6.0\Carola.EntityLayer.pdb
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\obj\Debug\net6.0\Carola.EntityLayer.csproj.AssemblyReference.cache
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\obj\Debug\net6.0\Carola.EntityLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\obj\Debug\net6.0\Carola.EntityLayer.AssemblyInfoInputs.cache
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\obj\Debug\net6.0\Carola.EntityLayer.AssemblyInfo.cs
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\obj\Debug\net6.0\Carola.EntityLayer.csproj.CoreCompileInputs.cache
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\obj\Debug\net6.0\Carola.EntityLayer.dll
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\obj\Debug\net6.0\refint\Carola.EntityLayer.dll
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\obj\Debug\net6.0\Carola.EntityLayer.pdb
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\obj\Debug\net6.0\Carola.EntityLayer.genruntimeconfig.cache
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.EntityLayer\obj\Debug\net6.0\ref\Carola.EntityLayer.dll

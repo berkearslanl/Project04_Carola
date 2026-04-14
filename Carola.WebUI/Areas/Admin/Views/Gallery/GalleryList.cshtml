@@ -1,0 +1,152 @@
+@model List<ResultGalleryDto>
+@using Carola.DtoLayer.Dtos.GalleryDtos
+@{
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+    var totalCount = Model.Count();
+}
+
+<style>
+    :root { --bg-dark:#0d0f14; --bg-dark2:#13161e; --bg-dark3:#1a1e2a; --accent:#e8ff47; --accent-dim:rgba(232,255,71,.12); --accent2:#4f8dff; --accent2-dim:rgba(79,141,255,.12); --danger:#ff5259; --border:rgba(255,255,255,.07); --text:#e2e8f0; --text-muted:#7a8499; --radius:12px; --radius-lg:18px; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    .gl-root { padding:28px; font-family:'DM Sans','Segoe UI',sans-serif; color:var(--text); }
+    .gl-breadcrumb { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+    .gl-breadcrumb span { color:var(--text); }
+    .gl-page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
+    .gl-page-title { font-family:'Syne',Georgia,sans-serif; font-size:26px; font-weight:700; color:var(--text); line-height:1; }
+    .gl-page-subtitle { font-size:13px; color:var(--text-muted); margin-top:5px; }
+    .btn-accent { background:var(--accent); color:#0d0f14; border:none; border-radius:10px; padding:9px 18px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:7px; text-decoration:none; transition:opacity .2s; }
+    .btn-accent:hover { opacity:.85; color:#0d0f14; }
+    .btn-edit { background:var(--accent2-dim); color:var(--accent2); border:1px solid rgba(79,141,255,.25); border-radius:8px; padding:6px 13px; font-size:12px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:5px; text-decoration:none; }
+    .btn-edit:hover { background:rgba(79,141,255,.2); color:var(--accent2); }
+    .btn-danger { background:rgba(255,82,89,.1); color:var(--danger); border:1px solid rgba(255,82,89,.2); border-radius:8px; padding:6px 13px; font-size:12px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:5px; text-decoration:none; }
+    .btn-danger:hover { background:rgba(255,82,89,.18); color:var(--danger); }
+    .gl-stat-card { background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; display:inline-flex; align-items:center; gap:14px; margin-bottom:22px; }
+    .gl-stat-icon { width:40px; height:40px; border-radius:10px; background:var(--accent-dim); color:var(--accent); display:grid; place-items:center; font-size:18px; }
+    .gl-stat-num { font-family:'Syne',sans-serif; font-size:24px; font-weight:700; }
+    .gl-stat-label { font-size:12px; color:var(--text-muted); }
+    .gl-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }
+    .gl-card { background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; transition:border-color .2s,transform .18s; }
+    .gl-card:hover { border-color:rgba(255,255,255,.14); transform:translateY(-2px); }
+    .gl-img-wrap { height:130px; overflow:hidden; background:var(--bg-dark3); position:relative; }
+    .gl-img-wrap img { width:100%; height:100%; object-fit:cover; }
+    .gl-img-ph { display:flex; align-items:center; justify-content:center; height:100%; color:var(--text-muted); font-size:32px; }
+    .gl-id-badge { position:absolute; top:8px; left:8px; background:rgba(0,0,0,.6); color:var(--accent); border-radius:5px; padding:2px 7px; font-size:10px; font-weight:600; }
+    .gl-card-body { padding:12px 14px; }
+    .gl-card-url { font-size:11px; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-bottom:10px; }
+    .gl-card-actions { display:flex; gap:6px; }
+    .gl-result-info { font-size:12px; color:var(--text-muted); margin-bottom:14px; }
+    .gl-result-info strong { color:var(--text); }
+    .gl-toolbar { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+    .gl-search-wrap { position:relative; max-width:340px; flex:1; min-width:200px; }
+    .gl-search-wrap input { width:100%; background:var(--bg-dark2); border:1px solid var(--border); border-radius:10px; color:var(--text); padding:9px 13px 9px 36px; font-size:13px; font-family:inherit; outline:none; }
+    .gl-search-wrap input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-dim); }
+    .gl-search-wrap input::placeholder { color:var(--text-muted); }
+    .gl-search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:14px; color:var(--text-muted); }
+    .gl-modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:200; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+    .gl-modal-backdrop.open { display:flex; }
+    .gl-modal { background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius-lg); padding:32px 28px 28px; width:100%; max-width:380px; text-align:center; position:relative; }
+    .gl-modal-close { position:absolute; top:14px; right:16px; background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer; }
+    .gl-modal-icon { font-size:38px; margin-bottom:10px; }
+    .gl-modal-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; margin-bottom:10px; }
+    .gl-modal-msg { font-size:13px; color:var(--text-muted); line-height:1.65; margin-bottom:24px; }
+    .gl-modal-actions { display:flex; gap:10px; justify-content:center; }
+</style>
+
+<div class="gl-root">
+    <div class="gl-breadcrumb">İçerik Yönetimi <span>›</span> <span>Galeri Listesi</span></div>
+
+    <div class="gl-page-header">
+        <div>
+            <h1 class="gl-page-title">Galeri Yönetimi</h1>
+            <p class="gl-page-subtitle">Ana sayfadaki galeri görsellerini yönetin.</p>
+        </div>
+        <a href="/Admin/Gallery/CreateGallery/" class="btn-accent">＋ Yeni Görsel Ekle</a>
+    </div>
+
+    <div class="gl-stat-card">
+        <div class="gl-stat-icon">🖼️</div>
+        <div>
+            <div class="gl-stat-num">@totalCount</div>
+            <div class="gl-stat-label">Toplam Görsel</div>
+        </div>
+    </div>
+
+    <div class="gl-toolbar">
+        <div class="gl-search-wrap">
+            <span class="gl-search-icon">🔍</span>
+            <input type="text" id="glSearch" placeholder="URL ara..." oninput="glRender()" />
+        </div>
+    </div>
+
+    <div class="gl-result-info" id="glResultInfo"></div>
+    <div class="gl-grid" id="glGrid"></div>
+</div>
+
+<div class="gl-modal-backdrop" id="glConfirmModal">
+    <div class="gl-modal">
+        <button class="gl-modal-close" onclick="glCloseModal()">✕</button>
+        <div class="gl-modal-icon">🗑️</div>
+        <div class="gl-modal-title">Görseli Sil</div>
+        <p class="gl-modal-msg" id="glConfirmMsg"></p>
+        <div class="gl-modal-actions">
+            <button class="btn-accent" onclick="glCloseModal()" style="background:var(--bg-dark3);color:var(--text);border:1px solid var(--border);">İptal</button>
+            <form id="glDeleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-danger">🗑️ Evet, Sil</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const GL_DATA = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(g => new {
+        g.GalleryId, g.ImageUrl
+    })));
+
+    function glGetFiltered() {
+        const q = document.getElementById('glSearch').value.toLowerCase();
+        return GL_DATA.filter(g => g.ImageUrl && g.ImageUrl.toLowerCase().includes(q));
+    }
+
+    function glRender() {
+        const items = glGetFiltered();
+        document.getElementById('glResultInfo').innerHTML = `<strong>${items.length}</strong> görsel listeleniyor`;
+        const grid = document.getElementById('glGrid');
+        if (items.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted);">Sonuç bulunamadı.</div>`;
+            return;
+        }
+        grid.innerHTML = items.map(g => `
+            <div class="gl-card">
+                <div class="gl-img-wrap">
+                    <span class="gl-id-badge">#${g.GalleryId}</span>
+                    ${g.ImageUrl
+                        ? `<img src="${glEsc(g.ImageUrl)}" alt="Galeri" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="gl-img-ph" style="display:none">🖼️</div>`
+                        : `<div class="gl-img-ph">🖼️</div>`}
+                </div>
+                <div class="gl-card-body">
+                    <div class="gl-card-url" title="${glEsc(g.ImageUrl)}">${g.ImageUrl ? glEsc(g.ImageUrl.length > 35 ? '...' + g.ImageUrl.slice(-32) : g.ImageUrl) : '—'}</div>
+                    <div class="gl-card-actions">
+                        <a href="/Admin/Gallery/UpdateGallery/${g.GalleryId}" class="btn-edit" style="flex:1;justify-content:center;">✏️</a>
+                        <button class="btn-danger" onclick="glConfirmDelete(${g.GalleryId})">🗑️</button>
+                    </div>
+                </div>
+            </div>`).join('');
+    }
+
+    function glConfirmDelete(id) {
+        document.getElementById('glConfirmMsg').innerHTML = `<strong>#${id}</strong> numaralı görseli silmek istediğinizden emin misiniz?`;
+        document.getElementById('glDeleteForm').action = `/Admin/Gallery/DeleteGallery/${id}`;
+        document.getElementById('glConfirmModal').classList.add('open');
+    }
+
+    function glCloseModal() { document.getElementById('glConfirmModal').classList.remove('open'); }
+    document.getElementById('glConfirmModal').addEventListener('click', function(e) { if (e.target === this) glCloseModal(); });
+
+    function glEsc(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+    }
+
+    glRender();
+</script>

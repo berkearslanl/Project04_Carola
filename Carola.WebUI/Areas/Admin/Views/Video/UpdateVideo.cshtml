@@ -1,0 +1,87 @@
+@model GetVideoByIdDto
+@using Carola.DtoLayer.Dtos.VideoDtos
+@{
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    :root { --bg-dark:#0d0f14; --bg-dark2:#13161e; --bg-dark3:#1a1e2a; --accent:#e8ff47; --accent-dim:rgba(232,255,71,.12); --danger:#ff5259; --border:rgba(255,255,255,.07); --text:#e2e8f0; --text-muted:#7a8499; --radius:12px; --radius-lg:18px; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    .uv-root { padding:28px; font-family:'DM Sans','Segoe UI',sans-serif; color:var(--text); }
+    .uv-breadcrumb { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+    .uv-breadcrumb a { color:var(--text-muted); text-decoration:none; } .uv-breadcrumb a:hover { color:var(--text); } .uv-breadcrumb span { color:var(--text); }
+    .uv-page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
+    .uv-page-title { font-family:'Syne',Georgia,sans-serif; font-size:26px; font-weight:700; color:var(--text); line-height:1; }
+    .uv-page-subtitle { font-size:13px; color:var(--text-muted); margin-top:5px; }
+    .btn-accent { background:var(--accent); color:#0d0f14; border:none; border-radius:10px; padding:9px 20px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:7px; text-decoration:none; transition:opacity .2s; }
+    .btn-accent:hover { opacity:.85; color:#0d0f14; }
+    .btn-outline { background:transparent; color:var(--text-muted); border:1px solid var(--border); border-radius:10px; padding:9px 18px; font-size:13px; font-weight:500; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:7px; text-decoration:none; transition:background .2s,color .2s; }
+    .btn-outline:hover { background:var(--bg-dark2); color:var(--text); }
+    .uv-card { background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:20px; }
+    .uv-card-head { display:flex; align-items:center; gap:10px; padding:16px 20px; border-bottom:1px solid var(--border); }
+    .uv-card-icon { width:32px; height:32px; border-radius:9px; display:grid; place-items:center; font-size:15px; background:var(--accent-dim); color:var(--accent); }
+    .uv-card-title { font-size:14px; font-weight:600; color:var(--text); }
+    .uv-card-subtitle { font-size:12px; color:var(--text-muted); margin-top:1px; }
+    .uv-card-body { padding:20px; }
+    .uv-field { display:flex; flex-direction:column; gap:6px; margin-bottom:18px; }
+    .uv-field:last-child { margin-bottom:0; }
+    .uv-field label { font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; }
+    .uv-required { color:var(--danger); margin-left:3px; }
+    .uv-field input { background:var(--bg-dark3); border:1px solid var(--border); border-radius:10px; color:var(--text); padding:10px 14px; font-size:13px; font-family:inherit; outline:none; width:100%; transition:border .2s,box-shadow .2s; }
+    .uv-field input::placeholder { color:var(--text-muted); }
+    .uv-field input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-dim); }
+    .field-validation-error { font-size:11px; color:var(--danger); }
+    .input-validation-error { border-color:rgba(255,82,89,.5) !important; box-shadow:0 0 0 3px rgba(255,82,89,.1) !important; }
+    .uv-action-bar { display:flex; align-items:center; justify-content:flex-end; gap:10px; padding-top:20px; border-top:1px solid var(--border); margin-top:4px; }
+    .uv-id-badge { display:inline-flex; align-items:center; gap:6px; background:var(--accent-dim); border:1px solid rgba(232,255,71,.2); border-radius:8px; padding:6px 12px; font-size:12px; color:var(--accent); font-weight:600; margin-bottom:20px; }
+</style>
+
+<div class="uv-root">
+    <div class="uv-breadcrumb">
+        İçerik Yönetimi <span>›</span>
+        <a href="/Admin/Video/VideoList/">Video Listesi</a>
+        <span>›</span> <span>Video Güncelle</span>
+    </div>
+
+    <div class="uv-page-header">
+        <div>
+            <h1 class="uv-page-title">Video Güncelle</h1>
+            <p class="uv-page-subtitle">Mevcut video URL'sini güncelleyin.</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <a href="/Admin/Video/VideoList/" class="btn-outline">✕ İptal</a>
+            <button type="submit" form="uvForm" class="btn-accent">💾 Güncelle</button>
+        </div>
+    </div>
+
+    <div class="uv-id-badge">🔑 Video #@Model.VideoId</div>
+
+    <form id="uvForm" asp-area="Admin" asp-controller="Video" asp-action="UpdateVideo" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="VideoId" />
+
+        <div class="uv-card">
+            <div class="uv-card-head">
+                <div class="uv-card-icon">🎬</div>
+                <div>
+                    <div class="uv-card-title">Video Bilgisi</div>
+                    <div class="uv-card-subtitle">Video URL'sini güncelleyin</div>
+                </div>
+            </div>
+            <div class="uv-card-body">
+                <div class="uv-field">
+                    <label>Video URL <span class="uv-required">*</span></label>
+                    <input type="text" asp-for="VideoUrl" maxlength="1000" autocomplete="off" />
+                    <span asp-validation-for="VideoUrl" class="field-validation-error"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="uv-action-bar">
+            <a href="/Admin/Video/VideoList/" class="btn-outline">✕ İptal</a>
+            <button type="submit" class="btn-accent">💾 Güncelle</button>
+        </div>
+    </form>
+</div>
+
+@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

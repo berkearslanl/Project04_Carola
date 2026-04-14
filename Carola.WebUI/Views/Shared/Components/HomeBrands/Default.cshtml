@@ -1,0 +1,49 @@
+@model List<ResultBrandDto>
+<style>
+    .brand-block {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 120px; /* SABİT YÜKSEKLİK */
+    }
+
+        .brand-block .image-box {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .brand-block img {
+    width: 120px;
+    height: 80px;
+    object-fit: contain;
+        transition: 0.3s;
+    filter: grayscale(100%);
+}
+.brand-block img:hover {
+    filter: grayscale(0%);
+    transform: scale(1.05);
+}
+</style>
+<!-- Markalar -->
+<section class="brands-section pt_120 pb_120">
+    <div class="container">
+        <div class="section-title centred mb_50">
+            <span class="sub-title">Markalar</span>
+            <h2 class="title">Çalıştığımız Markalar</h2>
+        </div>
+        <div class="owl-carousel owl_nav_one theme_carousel owl-theme"
+             data-options='{"loop": true, "margin": 30, "autoheight":true, "lazyload":true, "nav": false, "dots": false, "autoplay": true, "autoplayTimeout": 3000, "smartSpeed": 1000, "responsive":{ "0":{ "items":"2" }, "600":{ "items":"3" }, "768":{ "items":"4" }, "1200":{ "items":"6" }}}'>
+            @foreach (var item in Model)
+            {
+                <div class="brand-block">
+                    <figure class="image-box">
+                        <a href="#"><img src="@item.LogoUrl" alt="@item.BrandName"></a>
+                    </figure>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+<!-- Markalar Sonu -->

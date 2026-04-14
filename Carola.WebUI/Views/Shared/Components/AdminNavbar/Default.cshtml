@@ -1,0 +1,96 @@
+<header id="navbar">
+    <!-- Sidebar aç/kapat -->
+    <button id="toggleSidebar" onclick="toggleSidebar()" title="Menüyü aç/kapat">
+        <i class="bi bi-layout-sidebar"></i>
+    </button>
+
+    <!-- Breadcrumb -->
+    <div class="nav-breadcrumb d-none d-md-block">
+        @ViewData["Title"] &rsaquo; <span>@ViewData["Desc"]</span>
+    </div>
+
+    <!-- Arama -->
+    <div class="nav-search d-none d-lg-block">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Global arama..." id="globalSearch" oninput="filterCards(this.value)" />
+    </div>
+
+    <!-- Sağ aksiyonlar -->
+    <div class="nav-actions">
+
+        <!-- Bildirimler -->
+        <div class="dropdown">
+            <button class="nav-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-bell"></i>
+                <span class="badge-dot"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><h6 class="dropdown-header">Bildirimler</h6></li>
+                <li>
+                    <div class="notif-item">
+                        <div class="notif-title">Yeni rezervasyon geldi</div>
+                        <div class="notif-time">2 dakika önce</div>
+                    </div>
+                </li>
+                <li>
+                    <div class="notif-item">
+                        <div class="notif-title">BMW 3 Serisi iade edildi</div>
+                        <div class="notif-time">1 saat önce</div>
+                    </div>
+                </li>
+                <li>
+                    <div class="notif-item">
+                        <div class="notif-title">Bakım hatırlatması: Audi A4</div>
+                        <div class="notif-time">3 saat önce</div>
+                    </div>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li><a class="dropdown-item justify-content-center text-center" href="#" onclick="return false;">Tümünü Gör</a></li>
+            </ul>
+        </div>
+
+        <!-- Mesajlar -->
+        <div class="dropdown">
+            <button class="nav-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-chat-dots"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><h6 class="dropdown-header">Mesajlar</h6></li>
+                <li>
+                    <div class="notif-item">
+                        <div class="notif-title">Ahmet K. — Rezervasyon hakkında</div>
+                        <div class="notif-time">5 dakika önce</div>
+                    </div>
+                </li>
+                <li>
+                    <div class="notif-item">
+                        <div class="notif-title">Mehmet S. — Ödeme onayı</div>
+                        <div class="notif-time">30 dakika önce</div>
+                    </div>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li><a class="dropdown-item justify-content-center" href="#" onclick="return false;">Tüm Mesajlar</a></li>
+            </ul>
+        </div>
+
+        <!-- Profil -->
+        <div class="dropdown">
+            <div class="profile-btn" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="profile-avatar">AY</div>
+                <div class="d-none d-sm-block">
+                    <div class="profile-name">Admin Yönetici</div>
+                    <div class="profile-role">Süper Admin</div>
+                </div>
+                <i class="bi bi-chevron-down ms-1" style="font-size:11px;color:var(--text-muted);"></i>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><h6 class="dropdown-header">Admin Yönetici</h6></li>
+                <li><a class="dropdown-item" href="#" onclick="return false;"><i class="bi bi-person"></i> Profilim</a></li>
+                <li><a class="dropdown-item" href="#" onclick="return false;"><i class="bi bi-gear"></i> Ayarlar</a></li>
+                <li><hr class="dropdown-divider" /></li>
+                <li><a class="dropdown-item text-danger" href="#" onclick="showToast('Çıkış yapılıyor...', 'danger'); return false;"><i class="bi bi-box-arrow-right"></i> Çıkış Yap</a></li>
+            </ul>
+        </div>
+
+    </div>
+</header>

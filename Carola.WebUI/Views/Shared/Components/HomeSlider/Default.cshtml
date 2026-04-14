@@ -1,0 +1,40 @@
+@model List<ResultSliderDto>
+@using Carola.DtoLayer.Dtos.SliderDtos
+
+@if (Model != null && Model.Any())
+{
+    <section class="slider style_one">
+        <div class="owl-carousel owl-nav-none owl_dots_none theme_carousel owl-theme"
+             data-options='{"loop": true, "margin": 0, "autoheight":true, "lazyload":true, "nav": true, "dots": true, "autoplay": true, "autoplayTimeout": 7000, "smartSpeed": 1800, "responsive":{ "0":{ "items":"1" }, "768":{ "items":"1" }, "1000":{ "items":"1" }}}'>
+
+            @foreach (var item in Model)
+            {
+                <div class="slide-item-content">
+                    <div class="slide-item content_left">
+                        <div class="image-layer" style="background-image:url(@item.BackgroundImage)"></div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="slider_content">
+                                        <h6 class="animate_up d-inline-block">Araç Kiralama</h6>
+                                        <h1 class="animate_left">@Html.Raw(item.Title)</h1>
+                                        <p class="description animate_right">Bütçenizi zorlamadan premium araç deneyimi yaşayın. <br>Uygun fiyatlı kiralık araçlarımızı hemen keşfedin.</p>
+                                        <div class="button_all animate_down">
+                                            <a href="#" class="btn-style-two animated">Hemen Kirala</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-sm-12">
+                                    <div class="slider-image animate_left">
+                                        <img src="@item.Image" alt="Kiralık Araç">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </section>
+}

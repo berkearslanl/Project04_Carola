@@ -1,0 +1,106 @@
+@model CreateWhyUsDto
+@using Carola.DtoLayer.Dtos.WhyUsDtos
+@{
+    Layout = "~/Views/AdminLayout/Index.cshtml";
+}
+
+<style>
+    :root { --bg-dark:#0d0f14; --bg-dark2:#13161e; --bg-dark3:#1a1e2a; --accent:#e8ff47; --accent-dim:rgba(232,255,71,.12); --danger:#ff5259; --border:rgba(255,255,255,.07); --text:#e2e8f0; --text-muted:#7a8499; --radius:12px; --radius-lg:18px; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    .cw-root { padding:28px; font-family:'DM Sans','Segoe UI',sans-serif; color:var(--text); }
+    .cw-breadcrumb { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+    .cw-breadcrumb a { color:var(--text-muted); text-decoration:none; } .cw-breadcrumb a:hover { color:var(--text); } .cw-breadcrumb span { color:var(--text); }
+    .cw-page-header { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
+    .cw-page-title { font-family:'Syne',Georgia,sans-serif; font-size:26px; font-weight:700; color:var(--text); line-height:1; }
+    .cw-page-subtitle { font-size:13px; color:var(--text-muted); margin-top:5px; }
+    .btn-accent { background:var(--accent); color:#0d0f14; border:none; border-radius:10px; padding:9px 20px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:7px; text-decoration:none; transition:opacity .2s; }
+    .btn-accent:hover { opacity:.85; color:#0d0f14; }
+    .btn-outline { background:transparent; color:var(--text-muted); border:1px solid var(--border); border-radius:10px; padding:9px 18px; font-size:13px; font-weight:500; font-family:inherit; cursor:pointer; display:inline-flex; align-items:center; gap:7px; text-decoration:none; transition:background .2s,color .2s; }
+    .btn-outline:hover { background:var(--bg-dark2); color:var(--text); }
+    .cw-card { background:var(--bg-dark2); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:20px; }
+    .cw-card-head { display:flex; align-items:center; gap:10px; padding:16px 20px; border-bottom:1px solid var(--border); }
+    .cw-card-icon { width:32px; height:32px; border-radius:9px; display:grid; place-items:center; font-size:15px; background:var(--accent-dim); color:var(--accent); }
+    .cw-card-title { font-size:14px; font-weight:600; color:var(--text); }
+    .cw-card-subtitle { font-size:12px; color:var(--text-muted); margin-top:1px; }
+    .cw-card-body { padding:20px; }
+    .cw-field { display:flex; flex-direction:column; gap:6px; margin-bottom:18px; }
+    .cw-field:last-child { margin-bottom:0; }
+    .cw-field label { font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.6px; }
+    .cw-required { color:var(--danger); margin-left:3px; }
+    .cw-field input, .cw-field textarea { background:var(--bg-dark3); border:1px solid var(--border); border-radius:10px; color:var(--text); padding:10px 14px; font-size:13px; font-family:inherit; outline:none; width:100%; transition:border .2s,box-shadow .2s; }
+    .cw-field textarea { resize:vertical; min-height:90px; }
+    .cw-field input::placeholder, .cw-field textarea::placeholder { color:var(--text-muted); }
+    .cw-field input:focus, .cw-field textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-dim); }
+    .field-validation-error { font-size:11px; color:var(--danger); }
+    .input-validation-error { border-color:rgba(255,82,89,.5) !important; box-shadow:0 0 0 3px rgba(255,82,89,.1) !important; }
+    .cw-action-bar { display:flex; align-items:center; justify-content:flex-end; gap:10px; padding-top:20px; border-top:1px solid var(--border); margin-top:4px; }
+    .cw-icon-preview { width:80px; height:80px; border-radius:12px; background:var(--bg-dark3); border:1px dashed var(--border); display:grid; place-items:center; font-size:36px; margin-top:10px; }
+    .cw-hint { font-size:11px; color:var(--text-muted); margin-top:2px; }
+</style>
+
+<div class="cw-root">
+    <div class="cw-breadcrumb">
+        İçerik Yönetimi <span>›</span>
+        <a href="/Admin/WhyUs/WhyUsList/">Neden Biz Listesi</a>
+        <span>›</span> <span>Yeni Özellik Ekle</span>
+    </div>
+
+    <div class="cw-page-header">
+        <div>
+            <h1 class="cw-page-title">Yeni Özellik Ekle</h1>
+            <p class="cw-page-subtitle">"Neden Biz" bölümüne yeni bir madde ekleyin.</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <a href="/Admin/WhyUs/WhyUsList/" class="btn-outline">✕ İptal</a>
+            <button type="submit" form="cwForm" class="btn-accent">＋ Kaydet</button>
+        </div>
+    </div>
+
+    <form id="cwForm" asp-area="Admin" asp-controller="WhyUs" asp-action="CreateWhyUs" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="cw-card">
+            <div class="cw-card-head">
+                <div class="cw-card-icon">✨</div>
+                <div>
+                    <div class="cw-card-title">Özellik Bilgileri</div>
+                    <div class="cw-card-subtitle">İkon, başlık ve açıklama bilgilerini girin</div>
+                </div>
+            </div>
+            <div class="cw-card-body">
+                <div class="cw-field">
+                    <label>İkon (Emoji veya CSS sınıfı) <span class="cw-required">*</span></label>
+                    <input type="text" asp-for="IconUrl" id="cwIcon" placeholder="ör. 🚗 veya icon-1" maxlength="200" oninput="cwIconPreview(this.value)" autocomplete="off" />
+                    <span asp-validation-for="IconUrl" class="field-validation-error"></span>
+                    <div class="cw-hint">Emoji veya tema ikon sınıfı kullanabilirsiniz</div>
+                    <div class="cw-icon-preview" id="cwIconPreview">?</div>
+                </div>
+
+                <div class="cw-field">
+                    <label>Başlık <span class="cw-required">*</span></label>
+                    <input type="text" asp-for="Title" placeholder="ör. Geniş Araç Filosu" maxlength="100" autocomplete="off" />
+                    <span asp-validation-for="Title" class="field-validation-error"></span>
+                </div>
+
+                <div class="cw-field">
+                    <label>Açıklama <span class="cw-required">*</span></label>
+                    <textarea asp-for="Description" placeholder="Özelliğin kısa açıklaması..." maxlength="500"></textarea>
+                    <span asp-validation-for="Description" class="field-validation-error"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="cw-action-bar">
+            <a href="/Admin/WhyUs/WhyUsList/" class="btn-outline">✕ İptal</a>
+            <button type="submit" class="btn-accent">＋ Kaydet</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function cwIconPreview(val) {
+        document.getElementById('cwIconPreview').textContent = val || '?';
+    }
+</script>
+
+@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

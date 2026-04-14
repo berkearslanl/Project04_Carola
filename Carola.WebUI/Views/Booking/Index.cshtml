@@ -1,0 +1,650 @@
+@model BookingViewModel
+@{
+    ViewData["Title"] = "Rezervasyon";
+    Layout = "~/Views/_MainLayout/Index.cshtml";
+}
+
+<style>
+    /* ─── Breadcrumb ─── */
+    .booking-breadcrumb {
+        position: relative;
+        background-image: url(https://i.hizliresim.com/epybnf5.png);
+        background-size: cover;
+        background-position: center;
+        padding: 70px 0;
+    }
+    .booking-breadcrumb::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.52);
+        z-index: 1;
+    }
+    .booking-breadcrumb .inner {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+    .booking-breadcrumb h1 {
+        color: #fff;
+        font-size: 44px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+    }
+    .booking-breadcrumb p { color: rgba(255,255,255,0.75); font-size: 15px; }
+
+    /* ─── Step kartlar ─── */
+    .step-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+        padding: 32px 30px;
+        margin-bottom: 24px;
+    }
+    .step-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+        padding-bottom: 18px;
+        border-bottom: 2px solid #f0f2f5;
+    }
+    .step-number {
+        width: 42px; height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0d6efd, #0a58ca);
+        color: #fff; font-weight: 700; font-size: 16px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .step-title  { font-size: 18px; font-weight: 700; color: #1a1a2e; margin: 0; }
+    .step-subtitle { font-size: 13px; color: #888; margin: 0; }
+
+    /* ─── Ehliyet Yükleme ─── */
+    .license-upload-zone {
+        border: 2px dashed #d0d7e8;
+        border-radius: 14px;
+        background: #f8f9fb;
+        padding: 40px 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.25s, background 0.25s;
+        position: relative;
+    }
+    .license-upload-zone:hover { border-color: #0d6efd; background: #eef3ff; }
+    .license-upload-zone input[type="file"] {
+        position: absolute; inset: 0;
+        opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .license-upload-zone .upload-icon { font-size: 48px; margin-bottom: 10px; }
+    .license-upload-zone h6 { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 6px; }
+    .license-upload-zone p  { font-size: 13px; color: #888; margin: 0; }
+    .license-preview {
+        display: none;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-top: 16px;
+    }
+    .license-preview img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 12px;
+    }
+    .autofill-badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: #e8f5e9; color: #2e7d32;
+        border-radius: 20px; padding: 4px 12px;
+        font-size: 12px; font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    /* ─── Form alanları ─── */
+    .booking-form-group { margin-bottom: 20px; }
+    .booking-form-group label {
+        display: block; font-size: 13px; font-weight: 600;
+        color: #444; margin-bottom: 7px;
+    }
+    .booking-form-group label span { color: #e53935; }
+    .booking-form-group .form-control,
+    .booking-form-group select {
+        width: 100%;
+        border: 1.5px solid #e0e4ec;
+        border-radius: 10px;
+        padding: 11px 16px;
+        font-size: 14px; color: #333;
+        background: #fafbfd;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        outline: none; appearance: none;
+    }
+    .booking-form-group .form-control:focus,
+    .booking-form-group select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13,110,253,0.12);
+        background: #fff;
+    }
+    .field-hint { font-size: 12px; color: #aaa; margin-top: 5px; }
+
+    /* ─── Tarih kutuları ─── */
+    .date-display-box {
+        display: flex; align-items: center; gap: 10px;
+        background: #f0f4ff;
+        border: 1.5px solid #c7d7fb;
+        border-radius: 10px; padding: 12px 16px;
+    }
+    .date-display-box i { color: #0d6efd; font-size: 18px; }
+    .date-display-box .date-label { font-size: 11px; color: #888; }
+    .date-display-box .date-val   { font-size: 14px; font-weight: 600; color: #1a1a2e; }
+
+    /* ─── Select sarmalayıcı ─── */
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+        content: "▾"; position: absolute;
+        right: 14px; top: 50%; transform: translateY(-50%);
+        color: #888; pointer-events: none; font-size: 14px;
+    }
+    .select-wrap select { padding-right: 36px; }
+
+    /* ─── Sağ panel ─── */
+    .booking-summary-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+        overflow: hidden;
+        position: sticky;
+        top: 100px;
+    }
+    .summary-car-image { width: 100%; height: 210px; overflow: hidden; }
+    .summary-car-image img { width: 100%; height: 100%; object-fit: cover; }
+    .summary-body { padding: 24px; }
+    .summary-car-name  { font-size: 20px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; }
+    .summary-car-cat {
+        display: inline-block; background: #eef3ff; color: #0d6efd;
+        border-radius: 20px; padding: 3px 12px;
+        font-size: 12px; font-weight: 600; margin-bottom: 16px;
+    }
+    .summary-specs {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 10px; margin-bottom: 18px;
+    }
+    .spec-item {
+        background: #f8f9fb; border-radius: 10px;
+        padding: 10px 12px; display: flex; align-items: center; gap: 8px;
+    }
+    .spec-item i   { color: #0d6efd; font-size: 14px; width: 18px; text-align: center; }
+    .spec-item span { font-size: 12px; color: #555; }
+    .summary-divider { border: none; border-top: 1.5px dashed #e8eaf0; margin: 14px 0; }
+    .summary-date-row {
+        display: flex; align-items: center;
+        justify-content: space-between;
+        padding: 8px 0; border-bottom: 1px solid #f0f2f5;
+        font-size: 13px;
+    }
+    .summary-date-row:last-child { border-bottom: none; }
+    .summary-date-row .label { color: #888; display: flex; align-items: center; gap: 6px; }
+    .summary-date-row .val   { font-weight: 600; color: #333; }
+    .summary-price-box {
+        background: linear-gradient(135deg, #0d6efd, #0a58ca);
+        border-radius: 12px; padding: 16px 20px; margin: 16px 0;
+    }
+    .price-row {
+        display: flex; justify-content: space-between; align-items: center;
+        color: rgba(255,255,255,0.85); font-size: 13px; margin-bottom: 6px;
+    }
+    .price-row:last-child { margin-bottom: 0; }
+    .price-total { color: #fff; font-size: 22px; font-weight: 700; }
+    .summary-confirm-btn {
+        display: block; width: 100%; padding: 14px;
+        background: linear-gradient(135deg, #0d6efd, #0a58ca);
+        color: #fff; border: none; border-radius: 12px;
+        font-size: 16px; font-weight: 700; cursor: pointer;
+        text-align: center; transition: opacity 0.2s, transform 0.2s;
+        letter-spacing: 0.5px;
+    }
+    .summary-confirm-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .summary-note { font-size: 12px; color: #aaa; text-align: center; margin-top: 10px; }
+    .summary-note i { color: #0d6efd; }
+</style>
+
+<!-- Breadcrumb -->
+<section class="booking-breadcrumb">
+    <div class="container">
+        <div class="inner">
+            <h1>Rezervasyon Yap</h1>
+            <p>Birkaç adımda aracınızı kiralayın, yola çıkmaya hazır olun.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Günlük fiyat (JS hesabı için) -->
+<input type="hidden" id="hDailyPrice" value="@Model.Car?.DailyPrice" />
+
+<section class="pt_60 pb_90">
+    <div class="container">
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert" style="background:#fff0f0; border:1.5px solid #f5c6cb;
+                                  border-radius:12px; padding:16px 20px; margin-bottom:20px;">
+                <div style="font-weight:700; color:#c0392b; margin-bottom:6px;">
+                    <i class="fas fa-exclamation-circle"></i> Bir hata oluştu:
+                </div>
+                <p style="margin:0; color:#c0392b;">@TempData["ErrorMessage"]</p>
+            </div>
+        }
+
+
+
+        <form method="POST" action="/Booking/Confirm" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+
+            <!-- Controller'dan gelecek hidden alanlar -->
+            <input type="hidden" name="CarId"             value="@Model.Car?.CarId" />
+            <input type="hidden" name="PickupLocationId"  value="@Model.PickupLocationId" />
+            <input type="hidden" name="ReturnLocationId"  value="@Model.ReturnLocationId" />
+            <input type="hidden" name="TotalPrice"        id="totalPriceInput" />
+            <input type="hidden" name="ReservationStatus" value="Beklemede" />
+
+            <div class="row">
+
+                <!-- ═══════════ SOL PANEL ═══════════ -->
+                <div class="col-xl-8 col-lg-8 col-md-12">
+
+                    <!-- ADIM 1: Ehliyet -->
+                    <div class="step-card">
+                        <div class="step-header">
+                            <div class="step-number">1</div>
+                            <div>
+                                <p class="step-title">Ehliyet Fotoğrafı</p>
+                                <p class="step-subtitle">Bilgileriniz ehliyet üzerinden otomatik doldurulacak</p>
+                            </div>
+                        </div>
+
+                        <div class="license-upload-zone" id="uploadZone">
+                            <input type="file" name="LicensePhoto" id="licensePhoto"
+                                   accept="image/*" onchange="previewLicense(this)" />
+                            <div class="upload-icon">📄</div>
+                            <h6>Ehliyetinizin fotoğrafını yükleyin</h6>
+                            <p>JPG, PNG veya WEBP — Maks. 5 MB</p>
+                        </div>
+
+                        <div class="license-preview" id="licensePreview">
+                            <img id="licensePreviewImg" src="" alt="Ehliyet önizleme" />
+                        </div>
+                    </div>
+
+                    <!-- ADIM 2: Kişisel Bilgiler -->
+                    <div class="step-card">
+                        <div class="step-header">
+                            <div class="step-number">2</div>
+                            <div>
+                                <p class="step-title">Kişisel Bilgiler</p>
+                                <p class="step-subtitle">Ehliyet yüklendiğinde alanlar otomatik dolacak</p>
+                            </div>
+                        </div>
+
+                        <div class="autofill-badge">
+                            <i class="fas fa-magic"></i>&nbsp; Ehliyet OCR ile otomatik doldurulur
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="booking-form-group">
+                                    <label>Ad <span>*</span></label>
+                                    <input type="text" name="FirstName" id="fieldFirstName"
+                                           class="form-control" placeholder="Adınız" required />
+                                           
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="booking-form-group">
+                                    <label>Soyad <span>*</span></label>
+                                    <input type="text" name="LastName" id="fieldLastName"
+                                           class="form-control" placeholder="Soyadınız" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="booking-form-group">
+                                    <label>TC Kimlik No <span>*</span></label>
+                                    <input type="text" name="TcNo" id="fieldTcNo"
+                                           class="form-control" placeholder="_ _ _ _ _ _ _ _ _ _ _"
+                                           maxlength="11" inputmode="numeric" />
+                                    <div class="field-hint">
+                                        <i class="fas fa-info-circle"></i>
+                                        Yalnızca kimlik doğrulama amacıyla alınmaktadır.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="booking-form-group">
+                                    <label>Doğum Tarihi <span>*</span></label>
+                                    <input type="date" name="BirthDate" id="fieldBirthDate"
+                                           class="form-control" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="booking-form-group">
+                                    <label>Ehliyet No <span>*</span></label>
+                                    <input type="text" name="DriverLicenseNumber" id="fieldLicenseNo"
+                                           class="form-control" placeholder="Ehliyet numaranız" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="booking-form-group">
+                                    <label>E-posta <span>*</span></label>
+                                    <input type="email" name="Email"
+                                           class="form-control" placeholder="ornek@mail.com" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="booking-form-group">
+                                    <label>Telefon <span>*</span></label>
+                                    <input type="tel" name="Phone"
+                                           class="form-control" placeholder="05xx xxx xx xx" required />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ADIM 3: Kiralama Detayları -->
+                    <div class="step-card">
+                        <div class="step-header">
+                            <div class="step-number">3</div>
+                            <div>
+                                <p class="step-title">Kiralama Detayları</p>
+                                <p class="step-subtitle">Alış / teslim lokasyonu ve tarihlerinizi kontrol edin</p>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="booking-form-group">
+                                    <label>Alış Tarihi <span>*</span></label>
+                                    <input type="date" name="PickupDate" id="inputPickupDate"
+                                           class="form-control"
+                                           value="@Model.PickupDate"
+                                           min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                           required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="booking-form-group">
+                                    <label>İade Tarihi <span>*</span></label>
+                                    <input type="date" name="ReturnDate" id="inputReturnDate"
+                                           class="form-control"
+                                           value="@Model.ReturnDate"
+                                           min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")"
+                                           required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="booking-form-group">
+                                    <label>Alış Lokasyonu <span>*</span></label>
+                                    <div class="select-wrap">
+                                        <select name="PickupLocationIdForm" required>
+                                            <option value="">Lokasyon seçin...</option>
+                                            @foreach (var loc in Model.Locations)
+                                            {
+                                                <option value="@loc.LocationId"
+                                                        selected="@(Model.PickupLocationId == loc.LocationId)">
+                                                    @loc.LocationName — @loc.City
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="booking-form-group">
+                                    <label>İade Lokasyonu <span>*</span></label>
+                                    <div class="select-wrap">
+                                        <select name="ReturnLocationIdForm" required>
+                                            <option value="">Lokasyon seçin...</option>
+                                            @foreach (var loc in Model.Locations)
+                                            {
+                                                <option value="@loc.LocationId"
+                                                        selected="@(Model.ReturnLocationId == loc.LocationId)">
+                                                    @loc.LocationName — @loc.City
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="booking-form-group">
+                                    <label>Ekstra Notlar <small style="color:#aaa;">(isteğe bağlı)</small></label>
+                                    <textarea name="Description" class="form-control" rows="3"
+                                              placeholder="Özel talebiniz varsa buraya yazabilirsiniz..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /SOL -->
+
+                <!-- ═══════════ SAĞ PANEL ═══════════ -->
+                <div class="col-xl-4 col-lg-4 col-md-12">
+                    <div class="booking-summary-card">
+
+                        <div class="summary-car-image">
+                            <img src="@Model.Car?.ImageUrl"
+                                 alt="@Model.Car?.Brand @Model.Car?.Model" />
+                        </div>
+
+                        <div class="summary-body">
+                            <div class="summary-car-name">@Model.Car?.Brand @Model.Car?.Model</div>
+                            <span class="summary-car-cat">@Model.Car?.ModelYear</span>
+
+                            <div class="summary-specs">
+                                <div class="spec-item">
+                                    <i class="fas fa-gas-pump"></i>
+                                    <span>@Model.Car?.FuelType</span>
+                                </div>
+                                <div class="spec-item">
+                                    <i class="fas fa-cog"></i>
+                                    <span>@Model.Car?.TransmissionType</span>
+                                </div>
+                                <div class="spec-item">
+                                    <i class="fas fa-users"></i>
+                                    <span>@Model.Car?.SeatCount Koltuk</span>
+                                </div>
+                                <div class="spec-item">
+                                    <i class="fas fa-suitcase"></i>
+                                    <span>@Model.Car?.LuggageCapacity Valiz</span>
+                                </div>
+                                <div class="spec-item">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <span>@Model.Car?.Mileage km</span>
+                                </div>
+                                <div class="spec-item">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>@Model.Car?.ModelYear</span>
+                                </div>
+                            </div>
+
+                            <hr class="summary-divider" />
+
+                            <div class="summary-date-row">
+                                <span class="label">
+                                    <i class="fas fa-map-marker-alt"></i> Alış
+                                </span>
+                                <span class="val" id="summaryPickup">—</span>
+                            </div>
+                            <div class="summary-date-row">
+                                <span class="label">
+                                    <i class="fas fa-flag-checkered"></i> İade
+                                </span>
+                                <span class="val" id="summaryReturn">—</span>
+                            </div>
+                            <div class="summary-date-row">
+                                <span class="label">
+                                    <i class="fas fa-clock"></i> Süre
+                                </span>
+                                <span class="val"><span id="dayCount">—</span> gün</span>
+                            </div>
+
+                            <div class="summary-price-box">
+                                <div class="price-row">
+                                    <span>Günlük Fiyat</span>
+                                    <span>@Model.Car?.DailyPrice ₺</span>
+                                </div>
+                                <div class="price-row">
+                                    <span>Gün Sayısı</span>
+                                    <span><span id="dayCountPrice">—</span> gün</span>
+                                </div>
+                                <hr style="border-color:rgba(255,255,255,0.25); margin:10px 0;" />
+                                <div class="price-row" style="align-items:center;">
+                                    <span style="font-size:14px; font-weight:600; color:#fff;">
+                                        Toplam Tutar
+                                    </span>
+                                    <span class="price-total" id="totalPriceDisplay">—</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="summary-confirm-btn">
+                                <i class="fas fa-check-circle"></i>&nbsp; Rezervasyonu Onayla
+                            </button>
+                            <p class="summary-note">
+                                <i class="fas fa-shield-alt"></i>
+                                Bilgileriniz güvenle saklanır
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- /SAĞ -->
+
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    // ── Ehliyet fotoğrafı önizleme ────────────────────────────
+    function previewLicense(input) {
+        const preview = document.getElementById("licensePreview");
+        const img     = document.getElementById("licensePreviewImg");
+        const zone    = document.getElementById("uploadZone");
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                preview.style.display = "block";
+                zone.style.borderColor = "#0d6efd";
+                zone.style.background  = "#eef3ff";
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+            // ── Ehliyet OCR ──────────────────────────────────────────────
+        document.getElementById("licensePhoto").addEventListener("change", async function () {
+            if (!this.files || !this.files[0]) return;
+
+            const badge = document.querySelector(".autofill-badge");
+            badge.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&nbsp; Ehliyet okunuyor...';
+            badge.style.background = "#fff8e1";
+            badge.style.color = "#f59e0b";
+
+            const formData = new FormData();
+            formData.append("photo", this.files[0]);
+
+            try {
+                const res  = await fetch("/Booking/ScanLicense", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "RequestVerificationToken": document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    console.error("Sunucu hatası:", errData);
+                    throw new Error("Sunucu hatası: " + (errData.error || res.status));
+                }
+
+                const data = await res.json();
+                console.log("Claude yanıtı:", data);
+
+                if (data.firstName)  document.getElementById("fieldFirstName").value  = data.firstName;
+                if (data.lastName)   document.getElementById("fieldLastName").value   = data.lastName;
+                if (data.tcNo)       document.getElementById("fieldTcNo").value       = data.tcNo;
+                if (data.birthDate)  document.getElementById("fieldBirthDate").value  = data.birthDate;
+                if (data.licenseNo)  document.getElementById("fieldLicenseNo").value  = data.licenseNo;
+
+                badge.innerHTML   = '<i class="fas fa-check-circle"></i>&nbsp; Bilgiler otomatik dolduruldu';
+                badge.style.background = "#e8f5e9";
+                badge.style.color = "#2e7d32";
+
+            } catch (err) {
+                console.error("OCR hatası:", err);
+                badge.innerHTML   = '<i class="fas fa-exclamation-circle"></i>&nbsp; Okunamadı, bilgileri manuel girin';
+                badge.style.background = "#fff0f0";
+                badge.style.color = "#c0392b";
+            }
+        });
+
+    // ── Toplam fiyat hesaplama ────────────────────────────────
+    var dailyPrice      = parseFloat(document.getElementById("hDailyPrice").value) || 0;
+    var inputPickup     = document.getElementById("inputPickupDate");
+    var inputReturn     = document.getElementById("inputReturnDate");
+
+    function formatDate(val) {
+        if (!val) return "—";
+        var d = new Date(val);
+        if (isNaN(d)) return val;
+        return d.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+    }
+
+    function calcPrice() {
+        var pickupVal = inputPickup.value;
+        var returnVal = inputReturn.value;
+
+        document.getElementById("summaryPickup").textContent = formatDate(pickupVal);
+        document.getElementById("summaryReturn").textContent = formatDate(returnVal);
+
+        if (!pickupVal || !returnVal) {
+            document.getElementById("dayCount").textContent        = "—";
+            document.getElementById("dayCountPrice").textContent   = "—";
+            document.getElementById("totalPriceDisplay").textContent = "—";
+            document.getElementById("totalPriceInput").value        = "";
+            return;
+        }
+
+        var pickup  = new Date(pickupVal);
+        var returnD = new Date(returnVal);
+        var diff    = Math.round((returnD - pickup) / (1000 * 60 * 60 * 24));
+
+        if (diff <= 0) {
+            document.getElementById("dayCount").textContent        = "—";
+            document.getElementById("dayCountPrice").textContent   = "—";
+            document.getElementById("totalPriceDisplay").textContent = "Geçersiz tarih";
+            document.getElementById("totalPriceInput").value        = "";
+            return;
+        }
+
+        var total        = (dailyPrice * diff).toFixed(2);
+        var totalForForm = total.replace('.', ','); // Türkçe kültür için virgül
+
+        document.getElementById("dayCount").textContent          = diff;
+        document.getElementById("dayCountPrice").textContent     = diff;
+        document.getElementById("totalPriceDisplay").textContent = total + " ₺";
+        document.getElementById("totalPriceInput").value          = totalForForm;
+
+        // İade tarihi alış tarihinden önce olamaz
+        inputReturn.min = new Date(new Date(pickupVal).getTime() + 86400000)
+                              .toISOString().split("T")[0];
+    }
+
+    inputPickup.addEventListener("change", calcPrice);
+    inputReturn.addEventListener("change", calcPrice);
+
+    // Sayfa yüklenince hesapla (query string'den geldiyse)
+    calcPrice();
+</script>
+}

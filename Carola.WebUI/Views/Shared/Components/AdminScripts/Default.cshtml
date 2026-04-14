@@ -1,0 +1,116 @@
+<!-- Araç Detay Modalı -->
+<div class="modal fade" id="detailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailTitle">Araç Detayı</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <img id="detailImg" src="" alt="" style="width:100%;height:200px;object-fit:cover;" />
+                <div class="p-4" id="detailBody"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Bildirimi -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="liveToast" class="toast align-items-center" role="alert">
+        <div class="toast-header">
+            <strong class="me-auto" id="toastTitle">Bildirim</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body" id="toastMsg"></div>
+    </div>
+</div>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    /* ============================================================
+       SIDEBAR TOGGLE
+    ============================================================ */
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const wrapper = document.getElementById('main-wrapper');
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            sidebar.classList.toggle('mobile-open');
+            document.getElementById('overlay').classList.toggle('show');
+        } else {
+            sidebar.classList.toggle('collapsed');
+            wrapper.classList.toggle('expanded');
+        }
+    }
+
+    function closeMobileSidebar() {
+        document.getElementById('sidebar').classList.remove('mobile-open');
+        document.getElementById('overlay').classList.remove('show');
+    }
+
+    /* ============================================================
+       SUBMENU TOGGLE
+    ============================================================ */
+    function toggleSubmenu(id) {
+        const item = document.getElementById(id);
+        item.classList.toggle('open');
+    }
+
+    /* ============================================================
+       FILTER & SEARCH (genel yardımcı — her sayfadan erişilebilir)
+    ============================================================ */
+    function filterCards(q) {
+        if (typeof applyFilters === 'function') {
+            searchQuery = q.toLowerCase();
+            applyFilters();
+        }
+    }
+
+    /* ============================================================
+       DETAIL MODAL
+    ============================================================ */
+    function showDetail(id) {
+        if (typeof vehicles === 'undefined') return;
+        const v = vehicles.find(v => v.id === id);
+        if (!v) return;
+        document.getElementById('detailTitle').textContent = v.brand + ' ' + v.model;
+        document.getElementById('detailImg').src = v.img;
+        document.getElementById('detailBody').innerHTML = `
+            <div class="row g-2" style="font-size:14px;">
+              <div class="col-6"><span style="color:var(--text-muted);">Yıl:</span> ${v.year}</div>
+              <div class="col-6"><span style="color:var(--text-muted);">Plaka:</span> ${v.plate}</div>
+              <div class="col-6"><span style="color:var(--text-muted);">Yakıt:</span> ${v.fuel}</div>
+              <div class="col-6"><span style="color:var(--text-muted);">Vites:</span> ${v.transmission}</div>
+              <div class="col-6"><span style="color:var(--text-muted);">Koltuk:</span> ${v.seats}</div>
+              <div class="col-6"><span style="color:var(--text-muted);">Bagaj:</span> ${v.luggage} L</div>
+              <div class="col-6"><span style="color:var(--text-muted);">Kategori:</span> ${v.category.toUpperCase()}</div>
+              <div class="col-6"><span style="color:var(--text-muted);">Durum:</span>
+                <span style="color:${v.status==='available'?'var(--success)':'var(--warning)'}">
+                  ${v.status==='available'?'Müsait':'Kirada'}
+                </span>
+              </div>
+              <div class="col-12 mt-2" style="font-family:'Syne',sans-serif;font-size:22px;color:var(--accent);">
+                ₺${v.price.toLocaleString('tr-TR')}
+                <span style="font-size:13px;color:var(--text-muted);font-family:'DM Sans',sans-serif;">/ gün</span>
+              </div>
+            </div>
+        `;
+        new bootstrap.Modal(document.getElementById('detailModal')).show();
+    }
+
+    /* ============================================================
+       TOAST
+    ============================================================ */
+    function showToast(msg, type = 'success') {
+        const colors = { success: 'var(--success)', danger: 'var(--danger)', info: 'var(--accent2)' };
+        const toastEl = document.getElementById('liveToast');
+        document.getElementById('toastMsg').textContent = msg;
+        document.getElementById('toastTitle').style.color = colors[type] || colors.success;
+        new bootstrap.Toast(toastEl, { delay: 3000 }).show();
+    }
+</script>

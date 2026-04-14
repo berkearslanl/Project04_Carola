@@ -1,0 +1,17 @@
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\bin\Debug\net6.0\Carola.DataAccessLayer.deps.json
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\bin\Debug\net6.0\Carola.DataAccessLayer.dll
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\bin\Debug\net6.0\Carola.DataAccessLayer.pdb
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\bin\Debug\net6.0\Carola.EntityLayer.dll
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\bin\Debug\net6.0\Carola.EntityLayer.pdb
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\obj\Debug\net6.0\Carola.DataAccessLayer.csproj.AssemblyReference.cache
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\obj\Debug\net6.0\Carola.DataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\obj\Debug\net6.0\Carola.DataAccessLayer.AssemblyInfoInputs.cache
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\obj\Debug\net6.0\Carola.DataAccessLayer.AssemblyInfo.cs
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\obj\Debug\net6.0\Carola.DataAccessLayer.csproj.CoreCompileInputs.cache
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\obj\Debug\net6.0\Carola.D.43BA1AE4.Up2Date
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\obj\Debug\net6.0\Carola.DataAccessLayer.dll
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\obj\Debug\net6.0\refint\Carola.DataAccessLayer.dll
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\obj\Debug\net6.0\Carola.DataAccessLayer.pdb
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\obj\Debug\net6.0\ref\Carola.DataAccessLayer.dll
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\bin\Debug\net6.0\Carola.DtoLayer.dll
+C:\Users\berke\OneDrive\Masaüstü\ASP.NET Murat Yücedağ\4-CarolaProject\Carola.DataAccessLayer\bin\Debug\net6.0\Carola.DtoLayer.pdb

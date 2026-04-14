@@ -1,0 +1,26 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+@await Component.InvokeAsync("AdminHead")
+<body>
+
+    <!-- Mobil Overlay -->
+    <div id="overlay" onclick="closeMobileSidebar()"></div>
+
+    <div id="shell">
+        @await Component.InvokeAsync("AdminSidebar")
+
+        <div id="main-wrapper">
+            @await Component.InvokeAsync("AdminNavbar")
+
+            @RenderBody()
+        </div>
+    </div>
+
+    @await Component.InvokeAsync("AdminScripts")
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

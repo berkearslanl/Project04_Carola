@@ -1,0 +1,135 @@
+@{
+    var _ctrl   = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var _action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+    bool _vehicleMenuOpen  = _ctrl is "Car" or "Category" or "Brand";
+    bool _locationMenuOpen = _ctrl is "Location";
+    bool _reservMenuOpen   = _ctrl is "Reservation";
+    bool _contentMenuOpen  = _ctrl is "Slider" or "WhyUs" or "Gallery" or "Video";
+
+    string Nav(string ctrl, string action = "")
+    {
+        if (action == "")
+            return _ctrl.Equals(ctrl, StringComparison.OrdinalIgnoreCase) ? " active" : "";
+        return _ctrl.Equals(ctrl, StringComparison.OrdinalIgnoreCase)
+            && _action.Equals(action, StringComparison.OrdinalIgnoreCase) ? " active" : "";
+    }
+}
+
+<aside id="sidebar">
+
+    <!-- Marka -->
+    <div class="brand">
+        <div class="brand-icon"><i class="bi bi-car-front-fill"></i></div>
+        <div class="brand-name">Rent<span>Pro</span></div>
+    </div>
+
+    <!-- Navigasyon -->
+    <nav class="sidebar-nav">
+        <ul class="list-unstyled">
+
+            <!-- Dashboard -->
+            <li class="nav-item @Nav("Dashboard")">
+                <a href="/Admin/Dashboard/Index/">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+            </li>
+
+            <!-- Araç Yönetimi -->
+            <div class="nav-section-label">Araç Yönetimi</div>
+            <li class="nav-item @(_vehicleMenuOpen ? "open" : "")" id="menu-vehicles">
+                <a href="#" onclick="toggleSubmenu('menu-vehicles'); return false;">
+                    <i class="bi bi-car-front"></i>
+                    <span class="nav-label">Araç Yönetimi</span>
+                    <i class="bi bi-chevron-right submenu-arrow"></i>
+                </a>
+                <ul class="sub-menu">
+                    <li><a href="/Admin/Car/CarList/" class="@Nav("Car","CarList")">Araç Listesi</a></li>
+                    <li><a href="/Admin/Car/CreateCar/" class="@Nav("Car","CreateCar")">Araç Ekle</a></li>
+                    <li><a href="/Admin/Category/CategoryList/" class="@Nav("Category")">Araç Kategorileri</a></li>
+                    <li><a href="/Admin/Brand/BrandList/" class="@Nav("Brand")">Markalar</a></li>
+                </ul>
+            </li>
+
+            <!-- Lokasyonlar -->
+            <div class="nav-section-label">Lokasyonlar</div>
+            <li class="nav-item @(_locationMenuOpen ? "open" : "")" id="menu-locations">
+                <a href="#" onclick="toggleSubmenu('menu-locations'); return false;">
+                    <i class="bi bi-geo-alt"></i>
+                    <span class="nav-label">Lokasyonlar</span>
+                    <i class="bi bi-chevron-right submenu-arrow"></i>
+                </a>
+                <ul class="sub-menu">
+                    <li><a href="/Admin/Location/LocationList/" class="@Nav("Location","LocationList")">Lokasyon Listesi</a></li>
+                    <li><a href="/Admin/Location/CreateLocation/" class="@Nav("Location","CreateLocation")">Lokasyon Ekle</a></li>
+                </ul>
+            </li>
+
+            <!-- Rezervasyonlar -->
+            <div class="nav-section-label">Rezervasyonlar</div>
+            <li class="nav-item @(_reservMenuOpen ? "open" : "")" id="menu-reservations">
+                <a href="#" onclick="toggleSubmenu('menu-reservations'); return false;">
+                    <i class="bi bi-calendar-check"></i>
+                    <span class="nav-label">Rezervasyonlar</span>
+                    <i class="bi bi-chevron-right submenu-arrow"></i>
+                </a>
+                <ul class="sub-menu">
+                    <li><a href="/Admin/Reservation/ReservationList/" class="@Nav("Reservation","ReservationList")">Rezervasyon Listesi</a></li>
+                    <li><a href="/Admin/Reservation/CreateReservation/" class="@Nav("Reservation","CreateReservation")">Rezervasyon Ekle</a></li>
+                </ul>
+            </li>
+
+            <!-- Müşteriler -->
+            <li class="nav-item">
+                <a href="/Admin/Customer/CustomerList/" class="@Nav("Customer")">
+                    <i class="bi bi-people"></i>
+                    <span class="nav-label">Müşteriler</span>
+                </a>
+            </li>
+
+            <!-- İçerik Yönetimi -->
+            <div class="nav-section-label">İçerik Yönetimi</div>
+            <li class="nav-item @(_contentMenuOpen ? "open" : "")" id="menu-content">
+                <a href="#" onclick="toggleSubmenu('menu-content'); return false;">
+                    <i class="bi bi-images"></i>
+                    <span class="nav-label">İçerik Yönetimi</span>
+                    <i class="bi bi-chevron-right submenu-arrow"></i>
+                </a>
+                <ul class="sub-menu">
+                    <li><a href="/Admin/Slider/SliderList/" class="@Nav("Slider")">Slider</a></li>
+                    <li><a href="/Admin/WhyUs/WhyUsList/" class="@Nav("WhyUs")">Neden Biz</a></li>
+                    <li><a href="/Admin/Gallery/GalleryList/" class="@Nav("Gallery")">Galeri</a></li>
+                    <li><a href="/Admin/Video/VideoList/" class="@Nav("Video")">Video</a></li>
+                </ul>
+            </li>
+
+            <!-- Analitik -->
+            <div class="nav-section-label">Analitik</div>
+            <li class="nav-item @Nav("Reports")">
+                <a href="/Admin/Reports/Index/">
+                    <i class="bi bi-bar-chart-line"></i>
+                    <span class="nav-label">Raporlar</span>
+                </a>
+            </li>
+
+            <!-- Ayarlar -->
+            <li class="nav-item @Nav("Settings")">
+                <a href="/Admin/Settings/Index/">
+                    <i class="bi bi-gear"></i>
+                    <span class="nav-label">Ayarlar</span>
+                </a>
+            </li>
+
+        </ul>
+    </nav>
+
+    <!-- Alt Kısım -->
+    <div class="sidebar-footer">
+        <a href="/Main/Index/" onclick="showToast('Çıkış yapılıyor...', 'info'); return false;">
+            <i class="bi bi-box-arrow-left"></i>
+            <span class="nav-label">Çıkış Yap</span>
+        </a>
+    </div>
+
+</aside>
